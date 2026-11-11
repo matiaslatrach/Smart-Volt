@@ -13,9 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.smartvolt.modelo.Usuario
 
 @Composable
-fun PerfilOperarioView() {
+fun PerfilOperarioView(usuario: Usuario) {
 
     Column(
         modifier = Modifier
@@ -23,7 +24,6 @@ fun PerfilOperarioView() {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
         Text(
             text = "Mi perfil",
             style = MaterialTheme.typography.headlineMedium,
@@ -47,29 +47,28 @@ fun PerfilOperarioView() {
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 Text(
                     text = "Información del usuario",
                     style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
-                    text = "Nombre completo: Por definir",
+                    text = "Nombre completo: ${usuario.nombreCompleto}",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
                 Text(
-                    text = "Identificador: Por definir",
+                    text = "Identificador: ${usuario.id}",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
                 Text(
-                    text = "Cargo: Operario",
+                    text = "Cargo: ${usuario.cargo}",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
                 Text(
-                    text = "Rol: OPERARIO",
+                    text = "Rol: ${usuario.rol}",
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

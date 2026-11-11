@@ -1,23 +1,19 @@
+
 package com.example.smartvolt.ui.navigation
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navOptions
 import com.example.smartvolt.ui.view.login.LoginView
-import com.example.smartvolt.viewmodel.LoginViewModel
 import com.example.smartvolt.ui.view.operario.InicioOperarioView
 import com.example.smartvolt.ui.view.supervisor.InicioSupervisorView
 import com.example.smartvolt.ui.view.administrador.InicioAdministradorView
+import com.example.smartvolt.viewmodel.LoginViewModel
 
 @Composable
 fun NavegacionPrincipal(
@@ -25,6 +21,8 @@ fun NavegacionPrincipal(
     loginViewModel: LoginViewModel
 ) {
     val contexto = LocalContext.current
+
+    val estadoLogin by loginViewModel.uiState.collectAsState()
 
     NavHost(
         navController = navController,
@@ -36,7 +34,6 @@ fun NavegacionPrincipal(
             LoginView(
                 viewModel = loginViewModel,
                 onLoginExitoso = { usuario ->
-
                     val rutaDestino = when (usuario.rol.trim().uppercase()) {
                         "OPERARIO" -> Rutas.INICIO_OPERARIO
                         "SUPERVISOR" -> Rutas.INICIO_SUPERVISOR
@@ -62,36 +59,49 @@ fun NavegacionPrincipal(
             )
         }
 
+        // Inicio del operario
         composable(Rutas.INICIO_OPERARIO) {
-            InicioOperarioView(
-                onCerrarSesion = {
-                    loginViewModel.cerrarSesion()
+            val usuario = estadoLogin.usuarioLogeado
 
-                    navController.navigate(Rutas.LOGIN) {
-                        popUpTo(Rutas.INICIO_OPERARIO) {
-                            inclusive = true
+            if (usuario != null) {
+                InicioOperarioView(
+                    usuario = usuario,
+                    onCerrarSesion = {
+                        loginViewModel.cerrarSesion()
+
+                        navController.navigate(Rutas.LOGIN) {
+                            popUpTo(Rutas.INICIO_OPERARIO) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
                     }
-                }
-            )
+                )
+            }
         }
 
+        // Inicio del supervisor
         composable(Rutas.INICIO_SUPERVISOR) {
-            InicioSupervisorView(
-                onCerrarSesion = {
-                    loginViewModel.cerrarSesion()
+            val usuario = estadoLogin.usuarioLogeado
 
-                    navController.navigate(Rutas.LOGIN) {
-                        popUpTo(Rutas.INICIO_SUPERVISOR) {
-                            inclusive = true
+            if (usuario != null) {
+                InicioSupervisorView(
+                    usuario = usuario,
+                    onCerrarSesion = {
+                        loginViewModel.cerrarSesion()
+
+                        navController.navigate(Rutas.LOGIN) {
+                            popUpTo(Rutas.INICIO_SUPERVISOR) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
                     }
-                }
-            )
+                )
+            }
         }
 
+        // Inicio del administrador
         composable(Rutas.INICIO_ADMINISTRADOR) {
             InicioAdministradorView(
                 onCerrarSesion = {
@@ -108,4 +118,3 @@ fun NavegacionPrincipal(
         }
     }
 }
-

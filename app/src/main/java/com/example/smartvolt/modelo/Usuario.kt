@@ -17,5 +17,9 @@ data class Usuario(
 
     val rol: String,
 
-    val activo: Boolean = true
+    val activo: Boolean = true,
+
+    val supervisorId: String? = null,
+
+    val faenaId: Long? = null
 )

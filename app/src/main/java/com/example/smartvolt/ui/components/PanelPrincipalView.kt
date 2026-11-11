@@ -1,12 +1,13 @@
-
 package com.example.smartvolt.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +27,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+
+private val AzulOscuro = Color(0xFF101D32)
+private val AzulMedio = Color(0xFF1D304A)
+private val VerdeVolt = Color(0xFFD6F36A)
+private val TextoSubtle = Color(0xFFB5C2D3)
+private val Fondo = Color(0xFFF1F3F6)
 
 @Composable
 fun PanelPrincipalView(
@@ -35,7 +46,7 @@ fun PanelPrincipalView(
     subtitulo: String,
     modulos: List<String>,
     onCerrarSesion: () -> Unit,
-    contenidoPersonalizado: (@Composable (Int) -> Unit)? = null
+    contenidoPersonalizado: (@Composable (Int, (Int) -> Unit) -> Unit)? = null
 ) {
     var indiceSeleccionado by rememberSaveable(nombreRol) {
         mutableStateOf(0)
@@ -67,7 +78,7 @@ fun PanelPrincipalView(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = Fondo,
         bottomBar = {
             NavegacionInferior(
                 opciones = opciones,
@@ -83,7 +94,7 @@ fun PanelPrincipalView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(espacioContenido)
-                .background(MaterialTheme.colorScheme.background)
+                .background(Fondo)
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -101,28 +112,31 @@ fun PanelPrincipalView(
                     Text(
                         text = "SMARTVOLT",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
+                        color = AzulOscuro,
+                        fontWeight = FontWeight.ExtraBold
                     )
 
                     Text(
                         text = "GESTIÓN DE ASISTENCIA",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color(0xFF718096),
+                        fontWeight = FontWeight.Medium
                     )
                 }
 
                 Surface(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    color = AzulMedio,
                     shape = RoundedCornerShape(50.dp)
                 ) {
                     Text(
                         text = nombreRol,
                         modifier = Modifier.padding(
                             horizontal = 14.dp,
-                            vertical = 9.dp
+                            vertical = 8.dp
                         ),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                        color = VerdeVolt,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -130,40 +144,49 @@ fun PanelPrincipalView(
             // Contenido de la sección seleccionada
             if (contenidoPersonalizado != null) {
 
-                contenidoPersonalizado(indiceSeleccionado)
+                contenidoPersonalizado(indiceSeleccionado) { nuevoIndice ->
+                    indiceSeleccionado = nuevoIndice
+                }
 
             } else {
 
-                // Encabezado principal
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(24.dp)
+                // Encabezado principal con Gradiente Coherente al Login
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(AzulOscuro, AzulMedio)
+                            )
+                        )
+                        .padding(24.dp)
                 ) {
                     Column(
-                        modifier = Modifier.padding(24.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
                             text = "SMARTVOLT",
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = VerdeVolt,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Text(
                             text = titulo,
                             style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Text(
                             text = subtitulo,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = TextoSubtle
                         )
 
                         Surface(
-                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            color = Color(0xFF293A52),
                             shape = RoundedCornerShape(50.dp)
                         ) {
                             Text(
@@ -173,25 +196,27 @@ fun PanelPrincipalView(
                                     vertical = 7.dp
                                 ),
                                 style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                                color = VerdeVolt,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
                 }
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
                         text = "Módulos disponibles",
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = AzulOscuro,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text(
-                        text = "Accesos correspondientes a tu perfil.",
+                        text = "Accesos rápidos correspondientes a tu perfil.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color(0xFF718096)
                     )
                 }
 
@@ -199,9 +224,10 @@ fun PanelPrincipalView(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
+                            containerColor = Color.White
                         ),
-                        shape = RoundedCornerShape(18.dp)
+                        shape = RoundedCornerShape(18.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -216,18 +242,19 @@ fun PanelPrincipalView(
                                 Text(
                                     text = modulo,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    color = AzulOscuro,
+                                    fontWeight = FontWeight.Bold
                                 )
 
                                 Text(
                                     text = "Módulo en preparación",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = Color(0xFF718096)
                                 )
                             }
 
                             Surface(
-                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                color = Color(0xFFE2E8F0),
                                 shape = RoundedCornerShape(50.dp)
                             ) {
                                 Text(
@@ -237,7 +264,8 @@ fun PanelPrincipalView(
                                         vertical = 7.dp
                                     ),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    color = AzulMedio,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         }
@@ -248,12 +276,19 @@ fun PanelPrincipalView(
             // Cerrar sesión
             Button(
                 onClick = onCerrarSesion,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
+                shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error
+                    containerColor = Color(0xFFDC2626)
                 )
             ) {
-                Text("Cerrar sesión")
+                Text(
+                    text = "Cerrar sesión",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge
+                )
             }
         }
     }
