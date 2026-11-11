@@ -2,6 +2,8 @@ package com.example.smartvolt.ui.view.administrador
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +42,7 @@ import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
 import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.smartVoltTextFieldColors
 import com.example.smartvolt.viewmodel.FaenaViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 
@@ -697,11 +700,16 @@ private fun FormularioFaena(
         mutableStateOf(faena?.fechaTermino ?: "")
     }
 
+    var latitudTexto by remember(faena) { mutableStateOf(faena?.latitud?.toString() ?: "") }
+    var longitudTexto by remember(faena) { mutableStateOf(faena?.longitud?.toString() ?: "") }
+
+    val coordenadasValidas = latitudTexto.toDoubleOrNull()?.let { it in -90.0..90.0 } == true &&
+        longitudTexto.toDoubleOrNull()?.let { it in -180.0..180.0 } == true
     val formularioValido =
         nombre.isNotBlank() &&
                 ubicacion.isNotBlank() &&
                 fechaInicio.isNotBlank() &&
-                fechaTermino.isNotBlank()
+                fechaTermino.isNotBlank() && coordenadasValidas
 
     AlertDialog(
         onDismissRequest = onCerrar,
@@ -731,7 +739,8 @@ private fun FormularioFaena(
         },
         text = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(11.dp)
+                verticalArrangement = Arrangement.spacedBy(11.dp),
+                modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 OutlinedTextField(
                     value = nombre,
@@ -740,7 +749,8 @@ private fun FormularioFaena(
                     label = { Text("Nombre de la faena") },
                     placeholder = { Text("Ej. Proyecto Solar Norte") },
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
                 OutlinedTextField(
@@ -750,7 +760,8 @@ private fun FormularioFaena(
                     label = { Text("Ubicación") },
                     placeholder = { Text("Ej. Antofagasta") },
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
                 OutlinedTextField(
@@ -761,7 +772,8 @@ private fun FormularioFaena(
                     placeholder = { Text("Describe brevemente la faena") },
                     shape = RoundedCornerShape(14.dp),
                     minLines = 2,
-                    maxLines = 3
+                    maxLines = 3,
+                    colors = smartVoltTextFieldColors()
                 )
 
                 OutlinedTextField(
@@ -771,7 +783,8 @@ private fun FormularioFaena(
                     label = { Text("Fecha de inicio") },
                     placeholder = { Text("DD/MM/AAAA") },
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
                 OutlinedTextField(
@@ -781,9 +794,25 @@ private fun FormularioFaena(
                     label = { Text("Fecha de término") },
                     placeholder = { Text("DD/MM/AAAA") },
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
+                OutlinedTextField(
+                    value = latitudTexto,
+                    onValueChange = { latitudTexto = it },
+                    label = { Text("Latitud GPS (ej. -33.45)") },
+                    modifier = Modifier.fillMaxWidth(), singleLine = true,
+                    colors = smartVoltTextFieldColors()
+                )
+                OutlinedTextField(
+                    value = longitudTexto,
+                    onValueChange = { longitudTexto = it },
+                    label = { Text("Longitud GPS (ej. -70.65)") },
+                    modifier = Modifier.fillMaxWidth(), singleLine = true,
+                    colors = smartVoltTextFieldColors()
+                )
+                Text("Radio de control: 100 m · Bluetooth: simulación", style = MaterialTheme.typography.bodySmall)
                 Text(
                     text = "Los campos con información obligatoria deben completarse antes de guardar.",
                     color = TextoSecundario,
@@ -803,7 +832,10 @@ private fun FormularioFaena(
                             descripcion = descripcion.trim(),
                             fechaInicio = fechaInicio.trim(),
                             fechaTermino = fechaTermino.trim(),
-                            activa = faena?.activa ?: true
+                            activa = faena?.activa ?: true,
+                            latitud = latitudTexto.toDouble(),
+                            longitud = longitudTexto.toDouble(),
+                            beaconId = faena?.beaconId
                         )
                     )
                 },

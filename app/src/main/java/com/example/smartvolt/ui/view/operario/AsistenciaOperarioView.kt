@@ -1,359 +1,116 @@
 package com.example.smartvolt.ui.view.operario
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.smartvolt.modelo.Asistencia
+import androidx.core.content.ContextCompat
+import com.example.smartvolt.datos.local.AppDataBase
+import com.example.smartvolt.datos.repositorio.SolicitudExcepcionRepositorio
+import com.example.smartvolt.modelo.Faena
+import com.example.smartvolt.modelo.SolicitudExcepcion
+import com.example.smartvolt.modelo.Usuario
+import com.example.smartvolt.servicios.*
+import com.example.smartvolt.ui.theme.smartVoltTextFieldColors
 import com.example.smartvolt.viewmodel.AsistenciaViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
-private val VerdeSmartVolt = Color(0xFF1E5147)
-private val VerdeClaro = Color(0xFFC7E56A)
-private val FondoTarjeta = Color(0xFFFFFFFF)
-private val TextoSuave = Color(0xFF718078)
-private val BordeSuave = Color(0xFFDCE5DD)
+import kotlinx.coroutines.launch
 
 @Composable
-fun AsistenciaOperarioView(
-    viewModel: AsistenciaViewModel
-) {
-
+fun AsistenciaOperarioView(viewModel: AsistenciaViewModel, usuario: Usuario, faena: Faena?) {
     val estado by viewModel.uiState.collectAsState()
-
-    val ultimaAsistencia = estado.ultimaAsistencia
-
-    val jornadaIniciada = ultimaAsistencia?.tipo == "ENTRADA"
-
-    val estadoTexto = when {
-        ultimaAsistencia == null -> "SIN REGISTRO"
-        jornadaIniciada -> "JORNADA EN CURSO"
-        else -> "JORNADA FINALIZADA"
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val beacon = remember { SimulatedBeaconValidator(false) }
+    val gps = remember(context) { UbicacionValidator(context) }
+    val solicitudes = remember(context) { SolicitudExcepcionRepositorio(AppDataBase.obtenerBaseDatos(context).solicitudExcepcionDAO()) }
+    var beaconPresente by remember { mutableStateOf(false) }
+    var validando by remember { mutableStateOf(false) }
+    var resultado by remember { mutableStateOf<ResultadoValidacion?>(null) }
+    var mensaje by remember { mutableStateOf<String?>(null) }
+    var motivo by remember { mutableStateOf("") }
+    val pedirPermiso = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permisos ->
+        if (permisos[Manifest.permission.ACCESS_FINE_LOCATION] != true) {
+            resultado = ResultadoValidacion(beaconPresente, ResultadoGps(false, mensaje = "Permiso de ubicación precisa denegado"))
+            mensaje = "Puedes solicitar una excepción"
+        } else resultado = null
     }
+    val siguiente = if (estado.ultimaAsistencia?.tipo == "ENTRADA") "SALIDA" else "ENTRADA"
 
-    val textoBoton = if (jornadaIniciada) {
-        "Registrar salida"
-    } else {
-        "Registrar entrada"
-    }
-
-    val colorEstado = when {
-        ultimaAsistencia == null -> Color(0xFF718078)
-        jornadaIniciada -> Color(0xFF2E7D5B)
-        else -> Color(0xFF397A8A)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-
-        // Encabezado.
-        Column(
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = "Control de asistencia",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFF172522)
-            )
-
-            Text(
-                text = "Registra y consulta tu jornada laboral.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextoSuave
-            )
+    Column(Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        Text("Control de asistencia", style = MaterialTheme.typography.headlineSmall)
+        Text("Bluetooth simulado (DEMO) y ubicación GPS real · radio 100 m")
+        if (faena == null) Text("No tienes faena asignada", color = MaterialTheme.colorScheme.error)
+        else if (faena.latitud == null || faena.longitud == null)
+            Text("El administrador debe configurar la latitud y longitud de tu faena", color = MaterialTheme.colorScheme.error)
+        else Text("Faena: ${faena.nombre}")
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Simular baliza detectada")
+            Switch(checked = beaconPresente, onCheckedChange = { beaconPresente = it; resultado = null })
         }
-
-        // Estado actual de la jornada.
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = FondoTarjeta
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 2.dp
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(22.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-
-                Text(
-                    text = "ESTADO ACTUAL",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = TextoSuave
-                )
-
-                Surface(
-                    color = colorEstado.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(50.dp)
-                ) {
-                    Text(
-                        text = estadoTexto,
-                        modifier = Modifier.padding(
-                            horizontal = 14.dp,
-                            vertical = 9.dp
-                        ),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = colorEstado
-                    )
-                }
-
-                Text(
-                    text = when {
-                        ultimaAsistencia == null ->
-                            "Todavía no has registrado tu entrada."
-
-                        jornadaIniciada ->
-                            "Tu jornada laboral se encuentra iniciada. Recuerda registrar tu salida al finalizar."
-
-                        else ->
-                            "Tu última jornada fue finalizada correctamente."
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF172522)
-                )
-
-                if (ultimaAsistencia != null) {
-
-                    Surface(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = Color(0xFFF4F6F2),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            Text(
-                                text = "ÚLTIMA MARCACIÓN",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = TextoSuave
-                            )
-
-                            Text(
-                                text = ultimaAsistencia.tipo,
-                                style = MaterialTheme.typography.titleMedium,
-                                color = VerdeSmartVolt
-                            )
-
-                            Text(
-                                text = formatearFecha(ultimaAsistencia.fechaHora),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextoSuave
-                            )
-                        }
-                    }
-                }
-
-                // Acción principal.
-                Button(
-                    onClick = {
-                        viewModel.registrarMarcacion()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp),
-                    enabled = !estado.cargando,
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdeSmartVolt,
-                        contentColor = Color.White,
-                        disabledContainerColor = VerdeSmartVolt.copy(alpha = 0.5f)
-                    )
-                ) {
-                    if (estado.cargando) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(22.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = textoBoton,
-                            style = MaterialTheme.typography.titleSmall
-                        )
-                    }
-                }
-
-                estado.mensaje?.let { mensaje ->
-                    Text(
-                        text = mensaje,
-                        color = Color(0xFF2E7D5B),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-
-                estado.mensajeError?.let { error ->
-                    Text(
-                        text = error,
-                        color = Color(0xFFC64B4B),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-
-        // Historial.
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "Mis marcaciones",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFF172522)
-                )
-
-                Text(
-                    text = "Consulta tus últimos registros de asistencia.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextoSuave
-                )
-            }
-
-            if (estado.historial.isEmpty()) {
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = FondoTarjeta
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 1.dp
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(22.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Sin registros todavía",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color(0xFF172522)
-                        )
-
-                        Text(
-                            text = "Cuando registres tu entrada o salida, aparecerá aquí.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextoSuave
-                        )
-                    }
-                }
-
+        Button(enabled = faena != null && !validando, onClick = {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                pedirPermiso.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
             } else {
-
-                estado.historial.forEach { asistencia ->
-                    TarjetaMarcacion(asistencia)
+                val actual = faena ?: return@Button
+                validando = true
+                scope.launch {
+                    try {
+                        beacon.detectado = beaconPresente
+                        resultado = ValidadorAsistencia(beacon, gps).validar(actual.id, actual.latitud, actual.longitud)
+                        mensaje = null
+                    } catch (e: Exception) { mensaje = "No fue posible validar el dispositivo" }
+                    finally { validando = false }
                 }
             }
+        }) { Text(if (validando) "Validando..." else "Comprobar requisitos") }
+        resultado?.let {
+            Text("Bluetooth demo: ${if (it.bluetoothValido) "detectado" else "no detectado"}")
+            Text("GPS: ${it.gps.mensaje}")
+            it.gps.distanciaMetros?.let { distancia -> Text("Distancia aproximada: ${distancia.toInt()} m") }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-    }
-}
-
-@Composable
-private fun TarjetaMarcacion(
-    asistencia: Asistencia
-) {
-
-    val esEntrada = asistencia.tipo == "ENTRADA"
-
-    val colorTipo = if (esEntrada) {
-        VerdeSmartVolt
-    } else {
-        Color(0xFF397A8A)
-    }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = FondoTarjeta
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 1.dp
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Surface(
-                    color = colorTipo.copy(alpha = 0.12f),
-                    shape = RoundedCornerShape(50.dp)
-                ) {
-                    Text(
-                        text = asistencia.tipo,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 6.dp
-                        ),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = colorTipo
-                    )
+        Button(enabled = resultado?.permitido == true && faena != null && !validando && !estado.cargando, onClick = {
+            val actual = faena ?: return@Button
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                pedirPermiso.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+            } else {
+                validando = true
+                scope.launch {
+                    try {
+                        beacon.detectado = beaconPresente
+                        val nuevo = ValidadorAsistencia(beacon, gps).validar(actual.id, actual.latitud, actual.longitud)
+                        resultado = nuevo
+                        if (nuevo.permitido) viewModel.registrarMarcacion(nuevo, actual.id)
+                        else mensaje = "Validación fallida: solicita una excepción"
+                    } catch (e: Exception) { mensaje = "Error de validación" }
+                    finally { validando = false }
                 }
-
-                Text(
-                    text = formatearFecha(asistencia.fechaHora),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextoSuave
-                )
             }
-
-            Text(
-                text = "#${asistencia.id}",
-                style = MaterialTheme.typography.labelMedium,
-                color = TextoSuave
-            )
-        }
+        }) { Text(if (siguiente == "ENTRADA") "Registrar entrada" else "Registrar salida") }
+        estado.mensaje?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
+        estado.mensajeError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        mensaje?.let { Text(it) }
+        HorizontalDivider()
+        Text("Solicitud excepcional (requiere supervisor, misma instalación durante la demo)")
+        OutlinedTextField(value = motivo, onValueChange = { motivo = it }, label = { Text("Motivo") }, modifier = Modifier.fillMaxWidth(), colors = smartVoltTextFieldColors())
+        OutlinedButton(enabled = faena != null && usuario.supervisorId != null && motivo.isNotBlank() && !validando && resultado != null && resultado?.permitido == false, onClick = {
+            val actual = faena ?: return@OutlinedButton
+            val supervisor = usuario.supervisorId ?: return@OutlinedButton
+            scope.launch {
+                try {
+                    val r = resultado
+                    solicitudes.solicitar(SolicitudExcepcion(usuarioId = usuario.id, supervisorId = supervisor,
+                        faenaId = actual.id, tipo = siguiente, fechaSolicitud = System.currentTimeMillis(),
+                        motivo = motivo.trim(), bluetoothValido = r?.bluetoothValido == true, gpsValido = r?.gps?.valido == true))
+                    mensaje = "Solicitud pendiente de aprobación (demo local)"
+                    motivo = ""
+                } catch (e: Exception) { mensaje = "No fue posible crear la solicitud" }
+            }
+        }) { Text("Solicitar excepción") }
     }
-}
-
-private fun formatearFecha(fechaHora: Long): String {
-
-    val formato = SimpleDateFormat(
-        "dd/MM/yyyy HH:mm",
-        Locale.getDefault()
-    )
-
-    return formato.format(Date(fechaHora))
 }

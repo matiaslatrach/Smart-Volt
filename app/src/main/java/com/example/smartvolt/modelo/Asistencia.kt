@@ -27,5 +27,12 @@ data class Asistencia(
 
     val fechaHora: Long,
 
-    val tipo: String
+    val tipo: String,
+    val faenaId: Long? = null,
+    val metodoRegistro: String = "LEGADO",
+    val validacionBluetooth: String = "NO_VERIFICADO",
+    val validacionGps: String = "NO_VERIFICADO",
+    val distanciaMetros: Double? = null,
+    val precisionMetros: Float? = null,
+    val solicitudId: Long? = null
 )

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
+import com.example.smartvolt.ui.theme.smartVoltTextFieldColors
 import com.example.smartvolt.viewmodel.LoginViewModel
 
 private val BosqueLogin = Color(0xFF142B2A)
@@ -233,13 +234,7 @@ fun LoginView(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VerdeLogin,
-                    unfocusedBorderColor = BordeLogin,
-                    focusedContainerColor = BlancoLogin,
-                    unfocusedContainerColor = BlancoLogin,
-                    cursorColor = VerdeLogin
-                )
+                colors = smartVoltTextFieldColors()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -275,13 +270,7 @@ fun LoginView(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VerdeLogin,
-                    unfocusedBorderColor = BordeLogin,
-                    focusedContainerColor = BlancoLogin,
-                    unfocusedContainerColor = BlancoLogin,
-                    cursorColor = VerdeLogin
-                )
+                colors = smartVoltTextFieldColors()
             )
 
             // ERROR

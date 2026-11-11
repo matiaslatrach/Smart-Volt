@@ -47,11 +47,26 @@ interface AsistenciaDAO {
         supervisorId: String
     ): Flow<List<Asistencia>>
 
+    @Query("SELECT faenaId FROM usuarios WHERE id = :usuarioId AND activo = 1")
+    suspend fun obtenerFaenaUsuarioActivo(usuarioId: String): Long?
+
+    @Query("SELECT COUNT(*) FROM faenas WHERE id = :faenaId AND activa = 1 AND latitud IS NOT NULL AND longitud IS NOT NULL")
+    suspend fun faenaValida(faenaId: Long): Int
+
     @Transaction
     suspend fun registrarSiguienteMarcacion(
         usuarioId: String,
-        fechaHora: Long
+        fechaHora: Long,
+        faenaId: Long,
+        validacionBluetooth: String,
+        validacionGps: String,
+        distanciaMetros: Double?,
+        precisionMetros: Float?
     ): Asistencia {
+        require(validacionBluetooth == "VALIDO" && validacionGps == "VALIDO")
+        require(obtenerFaenaUsuarioActivo(usuarioId) == faenaId && faenaValida(faenaId) == 1) {
+            "Usuario o faena no autorizados"
+        }
 
         val ultima = obtenerUltimaAsistencia(usuarioId)
 
@@ -66,7 +81,13 @@ interface AsistenciaDAO {
         val asistencia = Asistencia(
             usuarioId = usuarioId,
             fechaHora = fechaHora,
-            tipo = tipo
+            tipo = tipo,
+            faenaId = faenaId,
+            metodoRegistro = "DEMO_BLE",
+            validacionBluetooth = validacionBluetooth,
+            validacionGps = validacionGps,
+            distanciaMetros = distanciaMetros,
+            precisionMetros = precisionMetros
         )
 
         registrarAsistencia(asistencia)

@@ -126,7 +126,9 @@ fun InicioOperarioView(
                 )
 
                 1 -> AsistenciaOperarioView(
-                    viewModel = asistenciaViewModel
+                    viewModel = asistenciaViewModel,
+                    usuario = usuario,
+                    faena = faenaAsignada
                 )
 
                 2 -> HistorialOperarioView(

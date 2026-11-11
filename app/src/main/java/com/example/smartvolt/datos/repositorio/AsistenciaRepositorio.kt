@@ -17,11 +17,21 @@ class AsistenciaRepositorio(
 
     suspend fun registrarSiguienteMarcacion(
         usuarioId: String,
-        fechaHora: Long
+        fechaHora: Long,
+        faenaId: Long,
+        validacionBluetooth: String,
+        validacionGps: String,
+        distanciaMetros: Double?,
+        precisionMetros: Float?
     ): Asistencia {
         return asistenciaDAO.registrarSiguienteMarcacion(
             usuarioId = usuarioId,
-            fechaHora = fechaHora
+            fechaHora = fechaHora,
+            faenaId = faenaId,
+            validacionBluetooth = validacionBluetooth,
+            validacionGps = validacionGps,
+            distanciaMetros = distanciaMetros,
+            precisionMetros = precisionMetros
         )
     }
 

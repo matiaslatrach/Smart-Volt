@@ -38,6 +38,8 @@ private fun obtenerIcono(etiqueta: String): ImageVector {
 
         "perfil", "mi perfil", "cuenta" -> Icons.Filled.Person
 
+        "solicitudes", "notificaciones" -> Icons.Filled.CheckCircle
+
         "configuración", "configuracion", "ajustes" ->
             Icons.Filled.Settings
 

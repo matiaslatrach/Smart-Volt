@@ -51,6 +51,7 @@ import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
 import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.smartVoltTextFieldColors
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 
 private val FondoUsuarios = Color(0xFFF4F6F2)
@@ -571,7 +572,8 @@ private fun FormularioCrearUsuario(
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     enabled = !creando,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
                 CampoUsuario(
@@ -710,7 +712,8 @@ private fun CampoUsuario(
         placeholder = { Text(ejemplo) },
         singleLine = true,
         enabled = habilitado,
-        shape = RoundedCornerShape(14.dp)
+        shape = RoundedCornerShape(14.dp),
+        colors = smartVoltTextFieldColors()
     )
 }
 
@@ -1052,7 +1055,8 @@ private fun FormularioEditarUsuario(
                     label = { Text("ID de usuario") },
                     enabled = false,
                     singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                    shape = RoundedCornerShape(14.dp),
+                    colors = smartVoltTextFieldColors()
                 )
 
                 CampoUsuario(

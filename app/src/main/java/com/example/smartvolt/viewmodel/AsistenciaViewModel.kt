@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartvolt.datos.repositorio.AsistenciaRepositorio
 import com.example.smartvolt.modelo.Asistencia
+import com.example.smartvolt.servicios.ResultadoValidacion
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,7 +49,11 @@ class AsistenciaViewModel(
     }
 
     // Registrar la siguiente marcación mediante Room.
-    fun registrarMarcacion() {
+    fun registrarMarcacion(resultado: ResultadoValidacion, faenaId: Long) {
+        if (!resultado.permitido || resultado.gps.distanciaMetros == null) {
+            _uiState.value = _uiState.value.copy(mensajeError = "Debes validar Bluetooth y GPS")
+            return
+        }
 
         // Si ya existe una operación, ignorar la nueva pulsación.
         if (!bloqueoMarcacion.tryLock()) return
@@ -66,7 +71,12 @@ class AsistenciaViewModel(
                 // dentro de una única transacción.
                 val asistencia = repositorio.registrarSiguienteMarcacion(
                     usuarioId = usuarioId,
-                    fechaHora = System.currentTimeMillis()
+                    fechaHora = System.currentTimeMillis(),
+                    faenaId = faenaId,
+                    validacionBluetooth = "VALIDO",
+                    validacionGps = "VALIDO",
+                    distanciaMetros = resultado.gps.distanciaMetros.toDouble(),
+                    precisionMetros = resultado.gps.precisionMetros
                 )
 
                 _uiState.value = _uiState.value.copy(

@@ -137,7 +137,7 @@ fun InicioSupervisorView(
             "Personal a cargo",
             "Revisión de jornadas",
             "Reportes de actividad",
-            "Notificaciones"
+            "Solicitudes excepcionales"
         ),
         onCerrarSesion = onCerrarSesion,
         contenidoPersonalizado = { indice, cambiarSeccion ->
@@ -163,10 +163,7 @@ fun InicioSupervisorView(
                     asistencias = asistencias
                 )
 
-                4 -> SeccionSupervisor(
-                    titulo = "Notificaciones",
-                    descripcion = "Aquí podrás consultar avisos y novedades relacionados con tu equipo."
-                )
+                4 -> SolicitudesSupervisorView(usuario.id)
             }
         }
     )

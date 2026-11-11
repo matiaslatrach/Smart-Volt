@@ -68,7 +68,8 @@ fun PanelPrincipalView(
             OpcionNavegacion("Inicio", "⌂"),
             OpcionNavegacion("Equipo", "♧"),
             OpcionNavegacion("Asistencia", "◷"),
-            OpcionNavegacion("Reportes", "▤")
+            OpcionNavegacion("Reportes", "▤"),
+            OpcionNavegacion("Solicitudes", "!")
         )
 
         "ADMINISTRADOR" -> listOf(

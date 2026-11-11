@@ -3,6 +3,28 @@ package com.example.smartvolt.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.runtime.Composable
+// Función reutilizable para todos los campos de texto de la app
+@Composable
+fun smartVoltTextFieldColors(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        focusedTextColor = TextoPrincipal,
+        unfocusedTextColor = TextoPrincipal,
+        focusedContainerColor = Color.White,
+        unfocusedContainerColor = Color.White,
+        focusedBorderColor = VerdePrincipal,
+        unfocusedBorderColor = Borde,
+        cursorColor = VerdePrincipal,
+        focusedLabelColor = VerdePrincipal,
+        unfocusedLabelColor = TextoSecundario,
+        focusedPlaceholderColor = Color(0xFFA0ACA7),
+        unfocusedPlaceholderColor = Color(0xFFA0ACA7)
+    )
+}
+
+
 // IDENTIDAD SMARTVOLT
 
 val BosqueProfundo = Color(0xFF142B2A)
@@ -18,7 +40,7 @@ val SuperficieSuave = Color(0xFFE9EFE9)
 // TEXTOS
 
 val TextoPrincipal = Color(0xFF172522)
-val TextoSecundario = Color(0xFF718078)
+val TextoSecundario = Color(0xFF6B7A75)
 val TextoHeaderSubtle = Color(0xFFB8C8BE)
 
 // BORDES
