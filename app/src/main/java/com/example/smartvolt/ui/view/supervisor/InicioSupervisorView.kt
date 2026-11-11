@@ -22,32 +22,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartvolt.datos.local.AppDataBase
+import com.example.smartvolt.datos.repositorio.AsistenciaRepositorio
 import com.example.smartvolt.datos.repositorio.UsuarioRepositorio
+import com.example.smartvolt.modelo.Asistencia
+import com.example.smartvolt.modelo.Faena
 import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.ui.components.PanelPrincipalView
-import com.example.smartvolt.ui.theme.AzulMedio
-import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
+import com.example.smartvolt.ui.theme.BosqueProfundo
+import com.example.smartvolt.ui.theme.EstadoError
+import com.example.smartvolt.ui.theme.EstadoExitoso
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.TextoPrincipal
 import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.VerdePrincipal
 import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.util.FechaHoraUtils
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModelFactory
-import com.example.smartvolt.datos.repositorio.AsistenciaRepositorio
-import com.example.smartvolt.modelo.Asistencia
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.example.smartvolt.modelo.Faena
-import com.example.smartvolt.util.FechaHoraUtils
 
+private val BlancoSupervisor = Color.White
 
 @Composable
 fun InicioSupervisorView(
@@ -56,8 +62,12 @@ fun InicioSupervisorView(
 ) {
     val context = LocalContext.current
 
+    val baseDatos = remember {
+        AppDataBase.obtenerBaseDatos(context)
+    }
+
     val usuarioDAO = remember {
-        AppDataBase.obtenerBaseDatos(context).usuarioDAO()
+        baseDatos.usuarioDAO()
     }
 
     val repositorio = remember(usuarioDAO) {
@@ -74,9 +84,8 @@ fun InicioSupervisorView(
 
     val estado by usuarioViewModel.uiState.collectAsState()
 
-    // Consultar las faenas asignadas al personal del supervisor.
     val faenaDAO = remember {
-        AppDataBase.obtenerBaseDatos(context).faenaDAO()
+        baseDatos.faenaDAO()
     }
 
     var faenasPorUsuario by remember {
@@ -94,8 +103,8 @@ fun InicioSupervisorView(
                     if (faena != null) {
                         resultado[trabajador.id] = faena
                     }
-                } catch (e: Exception) {
-                    // Si una consulta falla, se conserva el resto del equipo.
+                } catch (_: Exception) {
+                    // Se conserva el resto de las faenas si una consulta falla.
                 }
             }
         }
@@ -104,7 +113,7 @@ fun InicioSupervisorView(
     }
 
     val asistenciaDAO = remember {
-        AppDataBase.obtenerBaseDatos(context).asistenciaDAO()
+        baseDatos.asistenciaDAO()
     }
 
     val asistenciaRepositorio = remember(asistenciaDAO) {
@@ -114,7 +123,6 @@ fun InicioSupervisorView(
     val asistencias by asistenciaRepositorio
         .listarAsistenciasPorSupervisor(usuario.id)
         .collectAsState(initial = emptyList())
-
 
     LaunchedEffect(usuario.id) {
         usuarioViewModel.observarPersonalPorSupervisor(usuario.id)
@@ -154,20 +162,30 @@ fun InicioSupervisorView(
                     personal = estado.personalACargo,
                     asistencias = asistencias
                 )
+
+                4 -> SeccionSupervisor(
+                    titulo = "Notificaciones",
+                    descripcion = "Aquí podrás consultar avisos y novedades relacionados con tu equipo."
+                )
             }
         }
     )
 }
+
+// ---------------------------------------------------------
+// INICIO DEL SUPERVISOR
+// ---------------------------------------------------------
 
 @Composable
 fun ContenidoInicioSupervisor(
     onCambiarSeccion: (Int) -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(22.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = "GESTIÓN DE EQUIPO",
@@ -177,86 +195,191 @@ fun ContenidoInicioSupervisor(
             )
 
             Text(
-                text = "Accesos de supervisión",
-                color = AzulOscuro,
+                text = "Centro de supervisión",
+                color = BosqueProfundo,
                 fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            Text(
+                text = "Organiza y supervisa las actividades de tu equipo.",
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
 
-        val accesos = listOf(
-            Triple("Personal a cargo", "Revisa la lista de trabajadores asignados", 1),
-            Triple("Asistencia del equipo", "Supervisa entradas y salidas en tiempo real", 2),
-            Triple("Reportes de actividad", "Consulta informes de jornadas completadas", 3)
-        )
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = BosqueProfundo,
+            shape = RoundedCornerShape(24.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(22.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text(
+                    text = "PANEL DE SUPERVISIÓN",
+                    color = VerdeVolt,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelMedium
+                )
 
-        accesos.forEach { (titulo, descripcion, destinoIndice) ->
-            TarjetaAccesoSupervisor(
-                titulo = titulo,
-                descripcion = descripcion,
-                onClick = { onCambiarSeccion(destinoIndice) }
+                Text(
+                    text = "Tu equipo,\nbajo control.",
+                    color = BlancoSupervisor,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Text(
+                    text = "Accede a la información de tus trabajadores y revisa el desarrollo de sus jornadas.",
+                    color = Color(0xFFD0DDD5),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                Surface(
+                    color = VerdePrincipal,
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    Text(
+                        text = "GESTIÓN OPERACIONAL",
+                        color = VerdeVolt,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(
+                            horizontal = 13.dp,
+                            vertical = 8.dp
+                        )
+                    )
+                }
+            }
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Tus herramientas",
+                color = TextoPrincipal,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
             )
+
+            val accesos = listOf(
+                Triple(
+                    "Personal a cargo",
+                    "Consulta los trabajadores asignados a tu supervisión.",
+                    1
+                ),
+                Triple(
+                    "Asistencia del equipo",
+                    "Revisa las entradas y salidas registradas.",
+                    2
+                ),
+                Triple(
+                    "Reportes de actividad",
+                    "Consulta los indicadores de las jornadas.",
+                    3
+                )
+            )
+
+            accesos.forEachIndexed { indice, acceso ->
+                TarjetaAccesoSupervisor(
+                    titulo = acceso.first,
+                    descripcion = acceso.second,
+                    numero = "0${indice + 1}",
+                    onClick = {
+                        onCambiarSeccion(acceso.third)
+                    }
+                )
+            }
         }
     }
 }
+
+// ---------------------------------------------------------
+// TARJETAS DE ACCESO
+// ---------------------------------------------------------
 
 @Composable
 fun TarjetaAccesoSupervisor(
     titulo: String,
     descripcion: String,
+    numero: String,
     onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = BlancoSupervisor
         ),
-        border = BorderStroke(1.dp, Borde)
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Surface(
+                modifier = Modifier.size(48.dp),
+                color = SuperficieSuave,
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = numero,
+                        color = VerdePrincipal,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = titulo,
-                    style = MaterialTheme.typography.titleMedium,
+                    color = BosqueProfundo,
                     fontWeight = FontWeight.Bold,
-                    color = AzulOscuro
+                    style = MaterialTheme.typography.titleMedium
                 )
 
                 Text(
                     text = descripcion,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextoSecundario
+                    color = TextoSecundario,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-            Surface(
-                color = AzulOscuro,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "→",
-                    color = VerdeVolt,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
+            Text(
+                text = "→",
+                color = VerdePrincipal,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineSmall
+            )
         }
     }
 }
+
+// ---------------------------------------------------------
+// SECCIÓN DE NOTIFICACIONES / PLACEHOLDER
+// ---------------------------------------------------------
 
 @Composable
 fun SeccionSupervisor(
@@ -264,10 +387,11 @@ fun SeccionSupervisor(
     descripcion: String
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = "SUPERVISIÓN",
@@ -278,7 +402,7 @@ fun SeccionSupervisor(
 
             Text(
                 text = titulo,
-                color = AzulOscuro,
+                color = BosqueProfundo,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -292,38 +416,55 @@ fun SeccionSupervisor(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = Color.White
+                containerColor = BlancoSupervisor
             ),
-            border = BorderStroke(1.dp, Borde)
+            border = BorderStroke(1.dp, Borde),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 0.dp
+            )
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Surface(
-                    color = AzulMedio,
-                    shape = RoundedCornerShape(8.dp)
+                    color = SuperficieSuave,
+                    shape = RoundedCornerShape(50.dp)
                 ) {
                     Text(
-                        text = "Funcionalidad en preparación",
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = VerdeVolt
+                        text = "PRÓXIMAMENTE",
+                        modifier = Modifier.padding(
+                            horizontal = 13.dp,
+                            vertical = 7.dp
+                        ),
+                        color = VerdePrincipal,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
                 Text(
-                    text = "Este módulo estará disponible próximamente para coordinar el trabajo en faena.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextoSecundario
+                    text = "Estamos preparando este espacio.",
+                    color = BosqueProfundo,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Text(
+                    text = "Este módulo estará disponible próximamente para facilitar la coordinación del trabajo en faena.",
+                    color = TextoSecundario,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
     }
 }
+
+// ---------------------------------------------------------
+// PERSONAL A CARGO
+// ---------------------------------------------------------
 
 @Composable
 fun SeccionPersonalACargo(
@@ -334,10 +475,10 @@ fun SeccionPersonalACargo(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = "EQUIPO DE TRABAJO",
@@ -348,7 +489,7 @@ fun SeccionPersonalACargo(
 
             Text(
                 text = "Personal a cargo",
-                color = AzulOscuro,
+                color = BosqueProfundo,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -360,174 +501,64 @@ fun SeccionPersonalACargo(
             )
         }
 
-        if (cargando) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(36.dp)
-                    .align(Alignment.CenterHorizontally),
-                color = AzulOscuro,
-                strokeWidth = 3.dp
-            )
-        } else if (mensajeError != null) {
-            Surface(
-                color = Color(0xFFFFEEEE),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = mensajeError,
-                    color = Color(0xFFBA3030),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(12.dp)
+        when {
+            cargando -> {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = VerdePrincipal,
+                    strokeWidth = 3.dp
                 )
             }
-        } else if (personal.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                border = BorderStroke(1.dp, Borde)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+
+            mensajeError != null -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color(0xFFFFEEEE),
+                    shape = RoundedCornerShape(16.dp)
                 ) {
                     Text(
-                        text = "Sin trabajadores asignados",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = AzulOscuro
-                    )
-
-                    Text(
-                        text = "Cuando se asignen operarios a tu equipo, aparecerán listados en esta sección.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextoSecundario
+                        text = mensajeError,
+                        color = EstadoError,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
             }
-        } else {
-            Surface(
-                color = AzulMedio,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Text(
-                    text = "${personal.size} trabajadores asignados",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = VerdeVolt,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+
+            personal.isEmpty() -> {
+                TarjetaEstadoVacioSupervisor(
+                    titulo = "Sin trabajadores asignados",
+                    descripcion = "Cuando se asignen operarios a tu equipo, aparecerán listados en esta sección."
                 )
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                personal.forEach { trabajador ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        border = BorderStroke(1.dp, Borde)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = trabajador.nombreCompleto,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = AzulOscuro
-                                )
+            else -> {
+                Surface(
+                    color = BosqueProfundo,
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    Text(
+                        text = "${personal.size} trabajadores asignados",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = VerdeVolt,
+                        modifier = Modifier.padding(
+                            horizontal = 14.dp,
+                            vertical = 9.dp
+                        )
+                    )
+                }
 
-                                Surface(
-                                    color = if (trabajador.activo) Color(0xFFEBFBEE) else Color(0xFFFFEEEE),
-                                    shape = RoundedCornerShape(6.dp)
-                                ) {
-                                    Text(
-                                        text = if (trabajador.activo) "ACTIVO" else "INACTIVO",
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (trabajador.activo) Color(0xFF27834A) else Color(0xFFBA3030)
-                                    )
-                                }
-                            }
-
-                            Text(
-                                text = "Cargo: ${trabajador.cargo}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextoSecundario
-                            )
-
-                            HorizontalDivider(color = Borde, thickness = 1.dp)
-
-                            Text(
-                                text = "ID: ${trabajador.id}",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextoSecundario
-
-                            )
-                            HorizontalDivider(color = Borde)
-
-                            val faena = faenasPorUsuario[trabajador.id]
-
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                Text(
-                                    text = "FAENA ASIGNADA",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextoSecundario
-                                )
-
-                                Text(
-                                    text = when {
-                                        trabajador.faenaId == null -> "Sin faena asignada"
-                                        faena != null -> faena.nombre
-                                        else -> "Faena no disponible"
-                                    },
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = AzulOscuro
-                                )
-
-                                if (faena != null) {
-                                    Text(
-                                        text = "Ubicación: ${faena.ubicacion}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = TextoSecundario
-                                    )
-
-                                    Text(
-                                        text = if (faena.activa) {
-                                            "Estado: Faena activa"
-                                        } else {
-                                            "Estado: Faena finalizada"
-                                        },
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = if (faena.activa) {
-                                            Color(0xFF27834A)
-                                        } else {
-                                            Color(0xFFBA3030)
-                                        }
-                                    )
-                                }
-                            }
-                        }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    personal.forEach { trabajador ->
+                        TarjetaPersonalSupervisor(
+                            trabajador = trabajador,
+                            faena = faenasPorUsuario[trabajador.id]
+                        )
                     }
                 }
             }
@@ -535,78 +566,194 @@ fun SeccionPersonalACargo(
     }
 }
 
-
 @Composable
-fun SeccionAsistenciaEquipo(
-        personal: List<Usuario>,
-        asistencias: List<Asistencia>
+private fun TarjetaPersonalSupervisor(
+    trabajador: Usuario,
+    faena: Faena?
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = BlancoSupervisor
+        ),
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(17.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "CONTROL DE JORNADA",
-                    color = TextoSecundario,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Text(
+                        text = trabajador.nombreCompleto,
+                        color = BosqueProfundo,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
-                Text(
-                    text = "Asistencia del equipo",
-                    color = AzulOscuro,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                    Text(
+                        text = trabajador.cargo,
+                        color = TextoSecundario,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
-                Text(
-                    text = "Registro de entradas y salidas de tus trabajadores.",
-                    color = TextoSecundario,
-                    style = MaterialTheme.typography.bodyMedium
+                EtiquetaEstadoSupervisor(
+                    texto = if (trabajador.activo) "ACTIVO" else "INACTIVO",
+                    activo = trabajador.activo
                 )
             }
 
-            if (asistencias.isEmpty()) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
-                    border = BorderStroke(1.dp, Borde)
-                ) {
-                    Text(
-                        text = "Todavía no existen marcaciones registradas para tu equipo.",
-                        modifier = Modifier.padding(18.dp),
-                        color = TextoSecundario,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            } else {
-                Surface(
-                    color = AzulMedio,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = "${asistencias.size} marcaciones registradas",
-                        color = VerdeVolt,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 8.dp
-                        )
-                    )
-                }
+            HorizontalDivider(color = Borde)
 
+            Text(
+                text = "IDENTIFICACIÓN",
+                color = TextoSecundario,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelSmall
+            )
+
+            Text(
+                text = trabajador.id,
+                color = TextoPrincipal,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = Fondo,
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(13.dp),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text(
+                        text = "FAENA ASIGNADA",
+                        color = TextoSecundario,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+
+                    Text(
+                        text = when {
+                            trabajador.faenaId == null -> "Sin faena asignada"
+                            faena != null -> faena.nombre
+                            else -> "Faena no disponible"
+                        },
+                        color = BosqueProfundo,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+
+                    if (faena != null) {
+                        Text(
+                            text = "Ubicación: ${faena.ubicacion}",
+                            color = TextoSecundario,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+
+                        Text(
+                            text = if (faena.activa) {
+                                "Faena activa"
+                            } else {
+                                "Faena finalizada"
+                            },
+                            color = if (faena.activa) {
+                                EstadoExitoso
+                            } else {
+                                EstadoError
+                            },
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------
+// ASISTENCIA DEL EQUIPO
+// ---------------------------------------------------------
+
+@Composable
+fun SeccionAsistenciaEquipo(
+    personal: List<Usuario>,
+    asistencias: List<Asistencia>
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(
+                text = "CONTROL DE JORNADA",
+                color = TextoSecundario,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelMedium
+            )
+
+            Text(
+                text = "Asistencia del equipo",
+                color = BosqueProfundo,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            Text(
+                text = "Consulta las entradas y salidas registradas por tus trabajadores.",
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        if (asistencias.isEmpty()) {
+            TarjetaEstadoVacioSupervisor(
+                titulo = "Sin marcaciones registradas",
+                descripcion = "Todavía no existen entradas o salidas registradas para tu equipo."
+            )
+        } else {
+            Surface(
+                color = BosqueProfundo,
+                shape = RoundedCornerShape(50.dp)
+            ) {
+                Text(
+                    text = "${asistencias.size} marcaciones registradas",
+                    color = VerdeVolt,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(
+                        horizontal = 14.dp,
+                        vertical = 9.dp
+                    )
+                )
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 asistencias.forEach { asistencia ->
                     val trabajador = personal.firstOrNull {
                         it.id == asistencia.usuarioId
                     }
 
                     val esEntrada = asistencia.tipo == "ENTRADA"
+
                     val fecha = remember(asistencia.fechaHora) {
                         FechaHoraUtils.formatearFechaHora(asistencia.fechaHora)
                     }
@@ -614,14 +761,17 @@ fun SeccionAsistenciaEquipo(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color.White
+                            containerColor = BlancoSupervisor
                         ),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, Borde)
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, Borde),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 0.dp
+                        )
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(11.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -630,12 +780,12 @@ fun SeccionAsistenciaEquipo(
                             ) {
                                 Column(
                                     modifier = Modifier.weight(1f),
-                                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Text(
                                         text = trabajador?.nombreCompleto
                                             ?: asistencia.usuarioId,
-                                        color = AzulOscuro,
+                                        color = BosqueProfundo,
                                         fontWeight = FontWeight.Bold,
                                         style = MaterialTheme.typography.titleMedium
                                     )
@@ -647,29 +797,10 @@ fun SeccionAsistenciaEquipo(
                                     )
                                 }
 
-                                Surface(
-                                    color = if (esEntrada) {
-                                        Color(0xFFEBFBEE)
-                                    } else {
-                                        Color(0xFFFFEEEE)
-                                    },
-                                    shape = RoundedCornerShape(7.dp)
-                                ) {
-                                    Text(
-                                        text = asistencia.tipo,
-                                        color = if (esEntrada) {
-                                            Color(0xFF27834A)
-                                        } else {
-                                            Color(0xFFBA3030)
-                                        },
-                                        fontWeight = FontWeight.Bold,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        modifier = Modifier.padding(
-                                            horizontal = 10.dp,
-                                            vertical = 6.dp
-                                        )
-                                    )
-                                }
+                                EtiquetaEstadoSupervisor(
+                                    texto = asistencia.tipo,
+                                    activo = esEntrada
+                                )
                             }
 
                             HorizontalDivider(color = Borde)
@@ -685,178 +816,290 @@ fun SeccionAsistenciaEquipo(
             }
         }
     }
+}
 
-    @Composable
-    fun SeccionReportesEquipo(
-        personal: List<Usuario>,
-        asistencias: List<Asistencia>
+// ---------------------------------------------------------
+// REPORTES DE ACTIVIDAD
+// ---------------------------------------------------------
+
+@Composable
+fun SeccionReportesEquipo(
+    personal: List<Usuario>,
+    asistencias: List<Asistencia>
+) {
+    val ultimaMarcacionPorUsuario = asistencias
+        .groupBy { it.usuarioId }
+        .mapValues { (_, marcas) ->
+            marcas.maxWithOrNull(
+                compareBy<Asistencia> { it.fechaHora }
+                    .thenBy { it.id }
+            )
+        }
+
+    val trabajadoresEnJornada = ultimaMarcacionPorUsuario.values.count {
+        it?.tipo == "ENTRADA"
+    }
+
+    val trabajadoresFueraDeJornada = ultimaMarcacionPorUsuario.values.count {
+        it?.tipo == "SALIDA"
+    }
+
+    val totalEntradas = asistencias.count {
+        it.tipo == "ENTRADA"
+    }
+
+    val totalSalidas = asistencias.count {
+        it.tipo == "SALIDA"
+    }
+
+    val trabajadoresSinMarcaciones =
+        (personal.size - ultimaMarcacionPorUsuario.size).coerceAtLeast(0)
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
-        val ultimaMarcacionPorUsuario = asistencias
-            .groupBy { it.usuarioId }
-            .mapValues { (_, marcas) ->
-                marcas.maxWithOrNull(
-                    compareBy<Asistencia> { it.fechaHora }
-                        .thenBy { it.id }
-                )
-            }
-
-        val trabajadoresEnJornada = ultimaMarcacionPorUsuario.values.count {
-            it?.tipo == "ENTRADA"
-        }
-
-        val trabajadoresFueraDeJornada = ultimaMarcacionPorUsuario.values.count {
-            it?.tipo == "SALIDA"
-        }
-
-        val totalEntradas = asistencias.count {
-            it.tipo == "ENTRADA"
-        }
-
-        val totalSalidas = asistencias.count {
-            it.tipo == "SALIDA"
-        }
-
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = "RESUMEN OPERACIONAL",
-                    color = TextoSecundario,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.labelMedium
-                )
-
-                Text(
-                    text = "Reportes de actividad",
-                    color = AzulOscuro,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
-                Text(
-                    text = "Resumen de las marcaciones registradas por tu equipo.",
-                    color = TextoSecundario,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                TarjetaResumenSupervisor(
-                    titulo = "Personal asignado",
-                    valor = personal.size.toString(),
-                    modifier = Modifier.weight(1f)
-                )
-
-                TarjetaResumenSupervisor(
-                    titulo = "En jornada",
-                    valor = trabajadoresEnJornada.toString(),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                TarjetaResumenSupervisor(
-                    titulo = "Entradas",
-                    valor = totalEntradas.toString(),
-                    modifier = Modifier.weight(1f)
-                )
-
-                TarjetaResumenSupervisor(
-                    titulo = "Salidas",
-                    valor = totalSalidas.toString(),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                ),
-                border = BorderStroke(1.dp, Borde),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "Estado actual del equipo",
-                        color = AzulOscuro,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        text = "$trabajadoresEnJornada trabajadores con última marcación de entrada.",
-                        color = TextoSecundario,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Text(
-                        text = "$trabajadoresFueraDeJornada trabajadores con última marcación de salida.",
-                        color = TextoSecundario,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Text(
-                        text = "${personal.size - ultimaMarcacionPorUsuario.size} trabajadores sin marcaciones.",
-                        color = TextoSecundario,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+            Text(
+                text = "RESUMEN OPERACIONAL",
+                color = TextoSecundario,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelMedium
+            )
 
             Text(
-                text = "Nota: los totales de entradas y salidas corresponden a todas las marcaciones históricas disponibles, no solamente al día actual.",
+                text = "Reportes de actividad",
+                color = BosqueProfundo,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            Text(
+                text = "Indicadores generales de las marcaciones de tu equipo.",
                 color = TextoSecundario,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            TarjetaResumenSupervisor(
+                titulo = "Personal asignado",
+                valor = personal.size.toString(),
+                modifier = Modifier.weight(1f)
+            )
+
+            TarjetaResumenSupervisor(
+                titulo = "En jornada",
+                valor = trabajadoresEnJornada.toString(),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            TarjetaResumenSupervisor(
+                titulo = "Entradas",
+                valor = totalEntradas.toString(),
+                modifier = Modifier.weight(1f)
+            )
+
+            TarjetaResumenSupervisor(
+                titulo = "Salidas",
+                valor = totalSalidas.toString(),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = BlancoSupervisor
+            ),
+            border = BorderStroke(1.dp, Borde),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 0.dp
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Estado actual del equipo",
+                    color = BosqueProfundo,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                FilaEstadoReporte(
+                    etiqueta = "Con última marcación de entrada",
+                    valor = trabajadoresEnJornada.toString(),
+                    color = EstadoExitoso
+                )
+
+                FilaEstadoReporte(
+                    etiqueta = "Con última marcación de salida",
+                    valor = trabajadoresFueraDeJornada.toString(),
+                    color = EstadoError
+                )
+
+                FilaEstadoReporte(
+                    etiqueta = "Sin marcaciones",
+                    valor = trabajadoresSinMarcaciones.toString(),
+                    color = TextoSecundario
+                )
+            }
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = SuperficieSuave,
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Text(
+                text = "Los totales de entradas y salidas corresponden a todas las marcaciones históricas disponibles, no solamente al día actual.",
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(14.dp)
             )
         }
     }
+}
 
-    @Composable
-    private fun TarjetaResumenSupervisor(
-        titulo: String,
-        valor: String,
-        modifier: Modifier = Modifier
+// ---------------------------------------------------------
+// COMPONENTES AUXILIARES DE REPORTES
+// ---------------------------------------------------------
+
+@Composable
+private fun TarjetaResumenSupervisor(
+    titulo: String,
+    valor: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = BlancoSupervisor
+        ),
+        border = BorderStroke(1.dp, Borde),
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
-        Card(
-            modifier = modifier,
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
-            border = BorderStroke(1.dp, Borde),
-            shape = RoundedCornerShape(12.dp)
+        Column(
+            modifier = Modifier.padding(15.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = titulo,
-                    color = TextoSecundario,
-                    style = MaterialTheme.typography.bodySmall
-                )
+            Text(
+                text = titulo,
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodySmall
+            )
 
-                Text(
-                    text = valor,
-                    color = AzulOscuro,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+            Text(
+                text = valor,
+                color = BosqueProfundo,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
     }
+}
 
+@Composable
+private fun FilaEstadoReporte(
+    etiqueta: String,
+    valor: String,
+    color: Color
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = etiqueta,
+            modifier = Modifier.weight(1f),
+            color = TextoSecundario,
+            style = MaterialTheme.typography.bodySmall
+        )
 
+        Text(
+            text = valor,
+            color = color,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
+@Composable
+private fun EtiquetaEstadoSupervisor(
+    texto: String,
+    activo: Boolean
+) {
+    Surface(
+        color = if (activo) {
+            Color(0xFFE8F4EC)
+        } else {
+            Color(0xFFFCEBEC)
+        },
+        shape = RoundedCornerShape(50.dp)
+    ) {
+        Text(
+            text = texto,
+            modifier = Modifier.padding(
+                horizontal = 10.dp,
+                vertical = 6.dp
+            ),
+            color = if (activo) EstadoExitoso else EstadoError,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+@Composable
+private fun TarjetaEstadoVacioSupervisor(
+    titulo: String,
+    descripcion: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = BlancoSupervisor
+        ),
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = titulo,
+                color = BosqueProfundo,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text(
+                text = descripcion,
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}

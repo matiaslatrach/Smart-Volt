@@ -10,15 +10,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Asistencia
-import com.example.smartvolt.viewmodel.AsistenciaViewModel
 import com.example.smartvolt.util.FechaHoraUtils
+import com.example.smartvolt.viewmodel.AsistenciaViewModel
+
+private val VerdeHistorial = Color(0xFF1E5147)
+private val AzulSalida = Color(0xFF397A8A)
+private val TextoHistorial = Color(0xFF172522)
+private val TextoSecundarioHistorial = Color(0xFF718078)
+private val FondoHistorial = Color(0xFFFFFFFF)
 
 @Composable
 fun HistorialOperarioView(
@@ -27,45 +35,101 @@ fun HistorialOperarioView(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Text(
-            text = "Historial de asistencia",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
 
-        Text(
-            text = "Consulta tus registros de jornadas anteriores.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        // Encabezado.
+        Column(
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "Historial de asistencia",
+                style = MaterialTheme.typography.headlineMedium,
+                color = TextoHistorial
+            )
 
-        Text(
-            text = "Registros recientes",
-            style = MaterialTheme.typography.titleMedium
-        )
+            Text(
+                text = "Consulta tus registros de jornadas anteriores.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextoSecundarioHistorial
+            )
+        }
 
-        if (uiState.historial.isEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
+        // Resumen.
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp),
+            color = VerdeHistorial
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = "Todavía no existen registros de asistencia.",
-                    modifier = Modifier.padding(20.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "REGISTRO PERSONAL",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFFB8C8BE)
+                )
+
+                Text(
+                    text = "${uiState.historial.size} marcaciones",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White
+                )
+
+                Text(
+                    text = "Aquí puedes consultar tus movimientos de asistencia.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFFDCE5DD)
                 )
             }
-        } else {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+        }
+
+        // Lista de registros.
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Registros recientes",
+                style = MaterialTheme.typography.titleLarge,
+                color = TextoHistorial
+            )
+
+            if (uiState.historial.isEmpty()) {
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = FondoHistorial
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 1.dp
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(22.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Sin registros todavía",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextoHistorial
+                        )
+
+                        Text(
+                            text = "Cuando registres tu entrada o salida, tus marcaciones aparecerán aquí.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextoSecundarioHistorial
+                        )
+                    }
+                }
+
+            } else {
+
                 uiState.historial.forEach { asistencia ->
                     TarjetaHistorial(asistencia = asistencia)
                 }
@@ -80,44 +144,81 @@ private fun TarjetaHistorial(
 ) {
     val esEntrada = asistencia.tipo == "ENTRADA"
 
+    val colorTipo = if (esEntrada) {
+        VerdeHistorial
+    } else {
+        AzulSalida
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = FondoHistorial
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 1.dp
         )
     ) {
         Column(
             modifier = Modifier.padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = if (esEntrada) "Entrada" else "Salida",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (esEntrada) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.secondary
-                    }
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text(
+                        text = if (esEntrada) "Entrada" else "Salida",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextoHistorial
+                    )
+
+                    Text(
+                        text = FechaHoraUtils.formatearFechaHora(
+                            asistencia.fechaHora
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextoSecundarioHistorial
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = if (esEntrada) "ENTRADA" else "SALIDA",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Surface(
+                    color = colorTipo.copy(alpha = 0.12f),
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    Text(
+                        text = if (esEntrada) "ENTRADA" else "SALIDA",
+                        modifier = Modifier.padding(
+                            horizontal = 12.dp,
+                            vertical = 7.dp
+                        ),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = colorTipo
+                    )
+                }
             }
 
-            Text(
-                text = FechaHoraUtils.formatearFechaHora(asistencia.fechaHora),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                color = Color(0xFFF4F6F2),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Text(
+                    text = "Registro #${asistencia.id}",
+                    modifier = Modifier.padding(
+                        horizontal = 12.dp,
+                        vertical = 9.dp
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextoSecundarioHistorial
+                )
+            }
         }
     }
 }

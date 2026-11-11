@@ -1,3 +1,4 @@
+
 package com.example.smartvolt.ui.components
 
 import androidx.compose.foundation.background
@@ -33,11 +34,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-private val AzulOscuro = Color(0xFF101D32)
-private val AzulMedio = Color(0xFF1D304A)
-private val VerdeVolt = Color(0xFFD6F36A)
-private val TextoSubtle = Color(0xFFB5C2D3)
-private val Fondo = Color(0xFFF1F3F6)
+// Identidad visual SmartVolt
+private val BosqueProfundo = Color(0xFF142B2A)
+private val VerdePrincipal = Color(0xFF1E5147)
+private val VerdeVolt = Color(0xFFC7E56A)
+private val FondoSmartVolt = Color(0xFFF4F6F2)
+private val TextoSecundarioSmartVolt = Color(0xFF718078)
+private val TextoHeader = Color(0xFFD0DED5)
+private val SuperficieSuave = Color(0xFFE9EFE9)
 
 @Composable
 fun PanelPrincipalView(
@@ -78,7 +82,7 @@ fun PanelPrincipalView(
     }
 
     Scaffold(
-        containerColor = Fondo,
+        containerColor = FondoSmartVolt,
         bottomBar = {
             NavegacionInferior(
                 opciones = opciones,
@@ -94,45 +98,45 @@ fun PanelPrincipalView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(espacioContenido)
-                .background(Fondo)
+                .background(FondoSmartVolt)
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(horizontal = 22.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
 
-            // Barra superior
+            // Encabezado superior
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     Text(
                         text = "SMARTVOLT",
                         style = MaterialTheme.typography.titleLarge,
-                        color = AzulOscuro,
+                        color = BosqueProfundo,
                         fontWeight = FontWeight.ExtraBold
                     )
 
                     Text(
-                        text = "GESTIÓN DE ASISTENCIA",
+                        text = "GESTIÓN DE FAENAS",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF718096),
+                        color = TextoSecundarioSmartVolt,
                         fontWeight = FontWeight.Medium
                     )
                 }
 
                 Surface(
-                    color = AzulMedio,
+                    color = BosqueProfundo,
                     shape = RoundedCornerShape(50.dp)
                 ) {
                     Text(
                         text = nombreRol,
                         modifier = Modifier.padding(
-                            horizontal = 14.dp,
-                            vertical = 8.dp
+                            horizontal = 15.dp,
+                            vertical = 9.dp
                         ),
                         style = MaterialTheme.typography.labelMedium,
                         color = VerdeVolt,
@@ -150,20 +154,23 @@ fun PanelPrincipalView(
 
             } else {
 
-                // Encabezado principal con Gradiente Coherente al Login
+                // Encabezado principal
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(24.dp))
+                        .clip(RoundedCornerShape(26.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(AzulOscuro, AzulMedio)
+                                colors = listOf(
+                                    BosqueProfundo,
+                                    VerdePrincipal
+                                )
                             )
                         )
                         .padding(24.dp)
                 ) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
                             text = "SMARTVOLT",
@@ -182,18 +189,18 @@ fun PanelPrincipalView(
                         Text(
                             text = subtitulo,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextoSubtle
+                            color = TextoHeader
                         )
 
                         Surface(
-                            color = Color(0xFF293A52),
+                            color = Color.White.copy(alpha = 0.12f),
                             shape = RoundedCornerShape(50.dp)
                         ) {
                             Text(
                                 text = "PANEL $nombreRol",
                                 modifier = Modifier.padding(
                                     horizontal = 14.dp,
-                                    vertical = 7.dp
+                                    vertical = 8.dp
                                 ),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = VerdeVolt,
@@ -203,31 +210,36 @@ fun PanelPrincipalView(
                     }
                 }
 
+                // Encabezado de módulos
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Text(
                         text = "Módulos disponibles",
                         style = MaterialTheme.typography.titleLarge,
-                        color = AzulOscuro,
+                        color = BosqueProfundo,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Accesos rápidos correspondientes a tu perfil.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF718096)
+                        color = TextoSecundarioSmartVolt
                     )
                 }
 
+                // Tarjetas de módulos
                 modulos.forEach { modulo ->
+
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
                             containerColor = Color.White
                         ),
-                        shape = RoundedCornerShape(18.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        shape = RoundedCornerShape(20.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 1.dp
+                        )
                     ) {
                         Row(
                             modifier = Modifier
@@ -242,19 +254,19 @@ fun PanelPrincipalView(
                                 Text(
                                     text = modulo,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = AzulOscuro,
+                                    color = BosqueProfundo,
                                     fontWeight = FontWeight.Bold
                                 )
 
                                 Text(
                                     text = "Módulo en preparación",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Color(0xFF718096)
+                                    color = TextoSecundarioSmartVolt
                                 )
                             }
 
                             Surface(
-                                color = Color(0xFFE2E8F0),
+                                color = SuperficieSuave,
                                 shape = RoundedCornerShape(50.dp)
                             ) {
                                 Text(
@@ -264,7 +276,7 @@ fun PanelPrincipalView(
                                         vertical = 7.dp
                                     ),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = AzulMedio,
+                                    color = VerdePrincipal,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -279,9 +291,9 @@ fun PanelPrincipalView(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFDC2626)
+                    containerColor = Color(0xFFC64B4B)
                 )
             ) {
                 Text(

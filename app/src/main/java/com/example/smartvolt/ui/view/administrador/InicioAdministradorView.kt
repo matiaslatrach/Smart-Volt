@@ -1,8 +1,11 @@
+
 package com.example.smartvolt.ui.view.administrador
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,23 +22,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.smartvolt.datos.local.AppDataBase
+import com.example.smartvolt.datos.repositorio.FaenaRepositorio
 import com.example.smartvolt.datos.repositorio.UsuarioRepositorio
 import com.example.smartvolt.ui.components.PanelPrincipalView
 import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
 import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
-import com.example.smartvolt.viewmodel.UsuarioViewModel
-import com.example.smartvolt.viewmodel.UsuarioViewModelFactory
-import com.example.smartvolt.datos.repositorio.FaenaRepositorio
 import com.example.smartvolt.viewmodel.FaenaViewModel
 import com.example.smartvolt.viewmodel.FaenaViewModelFactory
+import com.example.smartvolt.viewmodel.UsuarioViewModel
+import com.example.smartvolt.viewmodel.UsuarioViewModelFactory
+
+private val VerdePrincipalAdmin = Color(0xFF1E5147)
+private val FondoAdmin = Color(0xFFF4F6F2)
+private val SuperficieAdmin = Color(0xFFE9EFE9)
+private val TextoPrincipalAdmin = Color(0xFF172522)
+private val BlancoAdmin = Color.White
 
 @Composable
 fun InicioAdministradorView(
@@ -114,21 +125,22 @@ private fun ContenidoInicioAdministrador(
     onCambiarSeccion: (Int) -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        // ENCABEZADO DE BIENVENIDA
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = "CENTRO DE CONTROL",
                 color = TextoSecundario,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
 
             Text(
                 text = "Panel de administración",
-                color = AzulOscuro,
+                color = TextoPrincipalAdmin,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -140,19 +152,89 @@ private fun ContenidoInicioAdministrador(
             )
         }
 
+        // TARJETA PRINCIPAL
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(26.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            AzulOscuro,
+                            VerdePrincipalAdmin
+                        )
+                    )
+                )
+                .padding(24.dp)
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(13.dp)
+            ) {
+                Surface(
+                    color = VerdeVolt.copy(alpha = 0.15f),
+                    shape = RoundedCornerShape(50.dp)
+                ) {
+                    Text(
+                        text = "GESTIÓN CENTRAL",
+                        modifier = Modifier.padding(
+                            horizontal = 12.dp,
+                            vertical = 7.dp
+                        ),
+                        color = VerdeVolt,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
+
+                Text(
+                    text = "Todo bajo\ncontrol.",
+                    color = BlancoAdmin,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Text(
+                    text = "Administra personas, faenas y recursos desde un solo lugar.",
+                    color = Color(0xFFD0DED5),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        // ACCESOS
+        Column(
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(
+                text = "Módulos de administración",
+                color = TextoPrincipalAdmin,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Text(
+                text = "Selecciona una sección para continuar.",
+                color = TextoSecundario,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
         TarjetaAccesoAdministrador(
+            numero = "01",
             titulo = "Gestión de usuarios",
-            descripcion = "Consulta las cuentas y controla el acceso del personal.",
+            descripcion = "Consulta cuentas y administra el acceso del personal.",
             onClick = { onCambiarSeccion(1) }
         )
 
         TarjetaAccesoAdministrador(
+            numero = "02",
             titulo = "Gestión de faenas",
-            descripcion = "Accede al módulo de administración de faenas.",
+            descripcion = "Organiza las faenas y sus asignaciones.",
             onClick = { onCambiarSeccion(2) }
         )
 
         TarjetaAccesoAdministrador(
+            numero = "03",
             titulo = "Configuración",
             descripcion = "Revisa las opciones generales del sistema.",
             onClick = { onCambiarSeccion(3) }
@@ -162,6 +244,7 @@ private fun ContenidoInicioAdministrador(
 
 @Composable
 private fun TarjetaAccesoAdministrador(
+    numero: String,
     titulo: String,
     descripcion: String,
     onClick: () -> Unit
@@ -170,25 +253,46 @@ private fun TarjetaAccesoAdministrador(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = BlancoAdmin
         ),
-        border = BorderStroke(1.dp, Borde)
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 1.dp
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
+                .padding(17.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Surface(
+                color = SuperficieAdmin,
+                shape = RoundedCornerShape(13.dp)
+            ) {
+                Text(
+                    text = numero,
+                    modifier = Modifier.padding(
+                        horizontal = 12.dp,
+                        vertical = 13.dp
+                    ),
+                    color = VerdePrincipalAdmin,
+                    fontWeight = FontWeight.ExtraBold,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
                     text = titulo,
-                    color = AzulOscuro,
+                    color = TextoPrincipalAdmin,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -200,21 +304,21 @@ private fun TarjetaAccesoAdministrador(
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
             Surface(
                 color = AzulOscuro,
-                shape = RoundedCornerShape(9.dp)
+                shape = RoundedCornerShape(11.dp)
             ) {
                 Text(
                     text = "→",
-                    color = VerdeVolt,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(
                         horizontal = 12.dp,
-                        vertical = 6.dp
-                    )
+                        vertical = 7.dp
+                    ),
+                    color = VerdeVolt,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }
@@ -228,18 +332,18 @@ private fun SeccionAdministradorPendiente(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Text(
             text = "ADMINISTRACIÓN",
             color = TextoSecundario,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.labelMedium
         )
 
         Text(
             text = titulo,
-            color = AzulOscuro,
+            color = TextoPrincipalAdmin,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineMedium
         )
@@ -251,17 +355,17 @@ private fun SeccionAdministradorPendiente(
         )
 
         Surface(
-            color = Color(0xFFF0F2F5),
-            shape = RoundedCornerShape(10.dp)
+            color = SuperficieAdmin,
+            shape = RoundedCornerShape(14.dp)
         ) {
             Text(
                 text = "MÓDULO EN PREPARACIÓN",
                 modifier = Modifier.padding(
-                    horizontal = 12.dp,
-                    vertical = 8.dp
+                    horizontal = 14.dp,
+                    vertical = 10.dp
                 ),
-                color = TextoSecundario,
-                fontWeight = FontWeight.SemiBold,
+                color = VerdePrincipalAdmin,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelSmall
             )
         }
