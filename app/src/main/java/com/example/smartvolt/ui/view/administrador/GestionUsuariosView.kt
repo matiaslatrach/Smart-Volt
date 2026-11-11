@@ -2,14 +2,18 @@
 package com.example.smartvolt.ui.view.administrador
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -49,6 +53,16 @@ import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 
+private val FondoUsuarios = Color(0xFFF4F6F2)
+private val SuperficieUsuarios = Color(0xFFE9EFE9)
+private val TextoUsuarios = Color(0xFF172522)
+private val VerdeUsuarios = Color(0xFF1E5147)
+private val BlancoUsuarios = Color(0xFFFFFFFF)
+private val VerdeExitoUsuarios = Color(0xFF2E7D5B)
+private val RojoErrorUsuarios = Color(0xFFC64B4B)
+private val FondoErrorUsuarios = Color(0xFFFFEEEE)
+private val FondoExitoUsuarios = Color(0xFFEBFBEE)
+
 @Composable
 fun GestionUsuariosView(
     usuarioViewModel: UsuarioViewModel
@@ -67,7 +81,6 @@ fun GestionUsuariosView(
         mutableStateOf<Usuario?>(null)
     }
 
-    // Cerrar formularios después de una operación exitosa.
     LaunchedEffect(estado.mensaje) {
         when (estado.mensaje) {
             "Usuario creado correctamente." -> {
@@ -85,136 +98,197 @@ fun GestionUsuariosView(
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(FondoUsuarios),
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
 
         // ENCABEZADO
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 text = "ADMINISTRACIÓN",
-                color = TextoSecundario,
-                fontWeight = FontWeight.SemiBold,
+                color = VerdeUsuarios,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
 
             Text(
                 text = "Gestión de usuarios",
-                color = AzulOscuro,
+                color = TextoUsuarios,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
 
             Text(
-                text = "Administra las cuentas, cargos y estado de acceso del personal.",
+                text = "Administra las cuentas, cargos y permisos de acceso del personal.",
                 color = TextoSecundario,
                 style = MaterialTheme.typography.bodyMedium
             )
         }
 
-        // BOTÓN CREAR USUARIO
+        // RESUMEN DE USUARIOS
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            ResumenUsuarios(
+                titulo = "Registrados",
+                cantidad = estado.usuarios.size.toString(),
+                modifier = Modifier.weight(1f)
+            )
+
+            ResumenUsuarios(
+                titulo = "Activos",
+                cantidad = estado.usuarios.count { it.activo }.toString(),
+                modifier = Modifier.weight(1f)
+            )
+
+            ResumenUsuarios(
+                titulo = "Supervisores",
+                cantidad = supervisores.size.toString(),
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        // BOTÓN CREAR
         Button(
             onClick = {
                 usuarioViewModel.limpiarMensajes()
                 mostrarFormulario = true
             },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(10.dp),
+            shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = AzulOscuro,
                 contentColor = VerdeVolt
+            ),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 0.dp,
+                pressedElevation = 2.dp
             )
         ) {
             Text(
-                text = "+ Crear usuario",
+                text = "+  Crear nuevo usuario",
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 7.dp)
             )
         }
 
-        // MENSAJE DE ÉXITO
+        // MENSAJES
         estado.mensaje?.let { mensaje ->
-            Surface(
-                color = Color(0xFFEBFBEE),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = mensaje,
-                    color = Color(0xFF27834A),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(12.dp)
-                )
-            }
+            MensajeUsuarios(
+                mensaje = mensaje,
+                esError = false
+            )
         }
 
-        // MENSAJE DE ERROR
         estado.mensajeError?.let { error ->
+            MensajeUsuarios(
+                mensaje = error,
+                esError = true
+            )
+        }
+
+        // TÍTULO DEL LISTADO
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Personal registrado",
+                color = TextoUsuarios,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+
             Surface(
-                color = Color(0xFFFFEEEE),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.fillMaxWidth()
+                color = SuperficieUsuarios,
+                shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
-                    text = error,
-                    color = Color(0xFFBA3030),
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(12.dp)
+                    text = "${estado.usuarios.size} cuentas",
+                    color = VerdeUsuarios,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(
+                        horizontal = 10.dp,
+                        vertical = 6.dp
+                    )
                 )
             }
         }
 
-        // LISTADO DE USUARIOS
+        // LISTADO
         when {
             estado.cargando && estado.usuarios.isEmpty() -> {
-                CircularProgressIndicator(
+                Column(
                     modifier = Modifier
-                        .size(36.dp)
-                        .align(Alignment.CenterHorizontally),
-                    color = AzulOscuro,
-                    strokeWidth = 3.dp
-                )
+                        .fillMaxWidth()
+                        .padding(vertical = 30.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(34.dp),
+                        color = VerdeUsuarios,
+                        strokeWidth = 3.dp
+                    )
+
+                    Text(
+                        text = "Cargando usuarios...",
+                        color = TextoSecundario,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
 
             estado.usuarios.isEmpty() -> {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color.White
+                        containerColor = BlancoUsuarios
                     ),
                     border = BorderStroke(1.dp, Borde)
                 ) {
-                    Text(
-                        text = "No hay usuarios registrados en el sistema.",
-                        modifier = Modifier.padding(20.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextoSecundario
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "◎",
+                            color = VerdeUsuarios,
+                            style = MaterialTheme.typography.headlineLarge
+                        )
+
+                        Text(
+                            text = "Aún no hay usuarios",
+                            color = TextoUsuarios,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Text(
+                            text = "Crea la primera cuenta para comenzar a gestionar el personal.",
+                            color = TextoSecundario,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
 
             else -> {
-                Surface(
-                    color = AzulMedio,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Text(
-                        text = "Usuarios registrados: ${estado.usuarios.size}",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = VerdeVolt,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 6.dp
-                        )
-                    )
-                }
-
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     estado.usuarios.forEach { usuario ->
                         TarjetaUsuario(
@@ -277,33 +351,31 @@ fun GestionUsuariosView(
                 usuarioViewModel.limpiarMensajes()
             },
             onGuardar = { usuarioActualizado ->
-                usuarioViewModel.actualizarUsuario(
-                    usuarioActualizado
-                )
+                usuarioViewModel.actualizarUsuario(usuarioActualizado)
             }
         )
     }
 
     // CONFIRMACIÓN DE ELIMINACIÓN
     usuarioPorEliminar?.let { usuario ->
-
         AlertDialog(
             onDismissRequest = {
                 usuarioPorEliminar = null
             },
-            shape = RoundedCornerShape(18.dp),
-            containerColor = Color.White,
+            shape = RoundedCornerShape(24.dp),
+            containerColor = BlancoUsuarios,
             title = {
                 Text(
                     text = "Eliminar usuario",
-                    color = AzulOscuro,
+                    color = TextoUsuarios,
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
                     text = "¿Estás seguro de que deseas eliminar a ${usuario.nombreCompleto} (${usuario.id})? Esta acción no se puede deshacer.",
-                    color = TextoSecundario
+                    color = TextoSecundario,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             },
             confirmButton = {
@@ -313,11 +385,15 @@ fun GestionUsuariosView(
                         usuarioPorEliminar = null
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFBA3030),
-                        contentColor = Color.White
-                    )
+                        containerColor = RojoErrorUsuarios,
+                        contentColor = BlancoUsuarios
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Eliminar definitivamente")
+                    Text(
+                        text = "Eliminar definitivamente",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             },
             dismissButton = {
@@ -336,7 +412,84 @@ fun GestionUsuariosView(
     }
 }
 
+// --------------------------------------------------
+// RESUMEN DE USUARIOS
+// --------------------------------------------------
 
+@Composable
+private fun ResumenUsuarios(
+    titulo: String,
+    cantidad: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = BlancoUsuarios
+        ),
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(
+                text = cantidad,
+                color = VerdeUsuarios,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Text(
+                text = titulo,
+                color = TextoSecundario,
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+    }
+}
+
+// --------------------------------------------------
+// MENSAJES
+// --------------------------------------------------
+
+@Composable
+private fun MensajeUsuarios(
+    mensaje: String,
+    esError: Boolean
+) {
+    Surface(
+        color = if (esError) FondoErrorUsuarios else FondoExitoUsuarios,
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(13.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(9.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(
+                        if (esError) RojoErrorUsuarios else VerdeExitoUsuarios,
+                        CircleShape
+                    )
+            )
+
+            Text(
+                text = mensaje,
+                color = if (esError) RojoErrorUsuarios else VerdeExitoUsuarios,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
 
 // --------------------------------------------------
 // FORMULARIO DE CREACIÓN
@@ -366,15 +519,15 @@ private fun FormularioCrearUsuario(
 
     AlertDialog(
         onDismissRequest = onCerrar,
-        shape = RoundedCornerShape(18.dp),
-        containerColor = Color.White,
+        shape = RoundedCornerShape(24.dp),
+        containerColor = BlancoUsuarios,
         title = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
                     text = "Nuevo usuario",
-                    color = AzulOscuro,
+                    color = TextoUsuarios,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -393,24 +546,20 @@ private fun FormularioCrearUsuario(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedTextField(
-                    value = id,
-                    onValueChange = { id = it.uppercase() },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("ID de usuario") },
-                    placeholder = { Text("Ej. OP-002") },
-                    singleLine = true,
-                    enabled = !creando
+                CampoUsuario(
+                    valor = id,
+                    alCambiar = { id = it.uppercase() },
+                    etiqueta = "ID de usuario",
+                    ejemplo = "Ej. OP-002",
+                    habilitado = !creando
                 )
 
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Nombre completo") },
-                    placeholder = { Text("Ej. Juan Pérez") },
-                    singleLine = true,
-                    enabled = !creando
+                CampoUsuario(
+                    valor = nombre,
+                    alCambiar = { nombre = it },
+                    etiqueta = "Nombre completo",
+                    ejemplo = "Ej. Juan Pérez",
+                    habilitado = !creando
                 )
 
                 OutlinedTextField(
@@ -421,25 +570,19 @@ private fun FormularioCrearUsuario(
                     placeholder = { Text("Mínimo 6 caracteres") },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
-                    enabled = !creando
+                    enabled = !creando,
+                    shape = RoundedCornerShape(14.dp)
                 )
 
-                OutlinedTextField(
-                    value = cargo,
-                    onValueChange = { cargo = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Cargo") },
-                    placeholder = { Text("Ej. Operador eléctrico") },
-                    singleLine = true,
-                    enabled = !creando
+                CampoUsuario(
+                    valor = cargo,
+                    alCambiar = { cargo = it },
+                    etiqueta = "Cargo",
+                    ejemplo = "Ej. Operador eléctrico",
+                    habilitado = !creando
                 )
 
-                Text(
-                    text = "ROL DEL USUARIO",
-                    color = TextoSecundario,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                EtiquetaFormulario("ROL DEL USUARIO")
 
                 SelectorDesplegable(
                     valor = rol,
@@ -456,12 +599,7 @@ private fun FormularioCrearUsuario(
                 )
 
                 if (rol == "OPERARIO") {
-                    Text(
-                        text = "SUPERVISOR ASIGNADO",
-                        color = TextoSecundario,
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                    EtiquetaFormulario("SUPERVISOR ASIGNADO")
 
                     SelectorDesplegable(
                         valor = supervisorId,
@@ -495,18 +633,11 @@ private fun FormularioCrearUsuario(
                     }
                 }
 
-                mensajeError?.let { error ->
-                    Surface(
-                        color = Color(0xFFFFEEEE),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            text = error,
-                            color = Color(0xFFBA3030),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
+                mensajeError?.let {
+                    MensajeUsuarios(
+                        mensaje = it,
+                        esError = true
+                    )
                 }
             }
         },
@@ -529,7 +660,7 @@ private fun FormularioCrearUsuario(
                     containerColor = AzulOscuro,
                     contentColor = VerdeVolt
                 ),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 if (creando) {
                     CircularProgressIndicator(
@@ -560,7 +691,43 @@ private fun FormularioCrearUsuario(
 }
 
 // --------------------------------------------------
-// SELECTOR DESPLEGABLE REUTILIZABLE
+// CAMPO REUTILIZABLE
+// --------------------------------------------------
+
+@Composable
+private fun CampoUsuario(
+    valor: String,
+    alCambiar: (String) -> Unit,
+    etiqueta: String,
+    ejemplo: String,
+    habilitado: Boolean
+) {
+    OutlinedTextField(
+        value = valor,
+        onValueChange = alCambiar,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(etiqueta) },
+        placeholder = { Text(ejemplo) },
+        singleLine = true,
+        enabled = habilitado,
+        shape = RoundedCornerShape(14.dp)
+    )
+}
+
+@Composable
+private fun EtiquetaFormulario(
+    texto: String
+) {
+    Text(
+        text = texto,
+        color = VerdeUsuarios,
+        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.labelMedium
+    )
+}
+
+// --------------------------------------------------
+// SELECTOR DESPLEGABLE
 // --------------------------------------------------
 
 @Composable
@@ -583,7 +750,8 @@ private fun SelectorDesplegable(
             onClick = { expandido = true },
             enabled = habilitado,
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.dp, Borde)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -596,12 +764,13 @@ private fun SelectorDesplegable(
                     } else {
                         etiqueta(valor)
                     },
-                    color = AzulOscuro
+                    color = TextoUsuarios
                 )
 
                 Text(
-                    text = "▼",
-                    color = TextoSecundario
+                    text = "⌄",
+                    color = VerdeUsuarios,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -644,80 +813,140 @@ private fun TarjetaUsuario(
     onEditar: () -> Unit,
     onEliminar: () -> Unit
 ) {
+    val colorEstado = if (usuario.activo) {
+        VerdeExitoUsuarios
+    } else {
+        RojoErrorUsuarios
+    }
+
+    val iniciales = usuario.nombreCompleto
+        .trim()
+        .split(" ")
+        .filter { it.isNotBlank() }
+        .take(2)
+        .joinToString("") { it.first().uppercase() }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = BlancoUsuarios
         ),
-        border = BorderStroke(1.dp, Borde)
+        border = BorderStroke(1.dp, Borde),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(15.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Box(
+                    modifier = Modifier
+                        .size(46.dp)
+                        .background(
+                            SuperficieUsuarios,
+                            CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = iniciales.ifBlank { "U" },
+                        color = VerdeUsuarios,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(11.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     Text(
                         text = usuario.nombreCompleto,
-                        style = MaterialTheme.typography.titleMedium,
+                        color = TextoUsuarios,
                         fontWeight = FontWeight.Bold,
-                        color = AzulOscuro
+                        style = MaterialTheme.typography.titleMedium
                     )
 
-                    Surface(
-                        color = if (usuario.activo) {
-                            Color(0xFFEBFBEE)
-                        } else {
-                            Color(0xFFFFEEEE)
-                        },
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = if (usuario.activo) "ACTIVA" else "INACTIVA",
-                            modifier = Modifier.padding(
-                                horizontal = 6.dp,
-                                vertical = 2.dp
-                            ),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = if (usuario.activo) {
-                                Color(0xFF27834A)
-                            } else {
-                                Color(0xFFBA3030)
-                            }
-                        )
-                    }
+                    Text(
+                        text = usuario.id,
+                        color = TextoSecundario,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
 
-                Text(
-                    text = "ID: ${usuario.id} | Cargo: ${usuario.cargo} | Rol: ${usuario.rol}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextoSecundario
-                )
+                Surface(
+                    color = if (usuario.activo) {
+                        FondoExitoUsuarios
+                    } else {
+                        FondoErrorUsuarios
+                    },
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = if (usuario.activo) "ACTIVO" else "INACTIVO",
+                        color = colorEstado,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(
+                            horizontal = 8.dp,
+                            vertical = 5.dp
+                        )
+                    )
+                }
+            }
 
+            Surface(
+                color = FondoUsuarios,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(11.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = usuario.cargo,
+                        color = TextoUsuarios,
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Text(
+                        text = "Rol: ${usuario.rol}",
+                        color = TextoSecundario,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 6.dp)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedButton(
                         onClick = onEditar,
                         enabled = !actualizando,
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Borde)
                     ) {
                         Text(
                             text = "Editar",
-                            color = AzulOscuro,
+                            color = VerdeUsuarios,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -725,35 +954,35 @@ private fun TarjetaUsuario(
                     OutlinedButton(
                         onClick = onEliminar,
                         enabled = !actualizando,
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, Color(0xFFBA3030))
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color(0xFFE8CACA))
                     ) {
                         Text(
                             text = "Eliminar",
-                            color = Color(0xFFBA3030),
+                            color = RojoErrorUsuarios,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
-            }
 
-            if (actualizando) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = AzulOscuro,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Switch(
-                    checked = usuario.activo,
-                    onCheckedChange = onCambiarEstado,
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = VerdeVolt,
-                        checkedTrackColor = AzulOscuro,
-                        uncheckedThumbColor = TextoSecundario,
-                        uncheckedTrackColor = Borde
+                if (actualizando) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = VerdeUsuarios,
+                        strokeWidth = 2.dp
                     )
-                )
+                } else {
+                    Switch(
+                        checked = usuario.activo,
+                        onCheckedChange = onCambiarEstado,
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = VerdeVolt,
+                            checkedTrackColor = AzulOscuro,
+                            uncheckedThumbColor = TextoSecundario,
+                            uncheckedTrackColor = Borde
+                        )
+                    )
+                }
             }
         }
     }
@@ -789,15 +1018,15 @@ private fun FormularioEditarUsuario(
 
     AlertDialog(
         onDismissRequest = onCerrar,
-        shape = RoundedCornerShape(18.dp),
-        containerColor = Color.White,
+        shape = RoundedCornerShape(24.dp),
+        containerColor = BlancoUsuarios,
         title = {
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
                     text = "Editar usuario",
-                    color = AzulOscuro,
+                    color = TextoUsuarios,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -822,31 +1051,27 @@ private fun FormularioEditarUsuario(
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("ID de usuario") },
                     enabled = false,
-                    singleLine = true
+                    singleLine = true,
+                    shape = RoundedCornerShape(14.dp)
                 )
 
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Nombre completo") },
-                    singleLine = true
+                CampoUsuario(
+                    valor = nombre,
+                    alCambiar = { nombre = it },
+                    etiqueta = "Nombre completo",
+                    ejemplo = "Nombre y apellido",
+                    habilitado = true
                 )
 
-                OutlinedTextField(
-                    value = cargo,
-                    onValueChange = { cargo = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Cargo") },
-                    singleLine = true
+                CampoUsuario(
+                    valor = cargo,
+                    alCambiar = { cargo = it },
+                    etiqueta = "Cargo",
+                    ejemplo = "Cargo del trabajador",
+                    habilitado = true
                 )
 
-                Text(
-                    text = "ROL DEL USUARIO",
-                    color = TextoSecundario,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                EtiquetaFormulario("ROL DEL USUARIO")
 
                 SelectorDesplegable(
                     valor = rol,
@@ -863,12 +1088,7 @@ private fun FormularioEditarUsuario(
                 )
 
                 if (rol == "OPERARIO") {
-                    Text(
-                        text = "SUPERVISOR ASIGNADO",
-                        color = TextoSecundario,
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                    EtiquetaFormulario("SUPERVISOR ASIGNADO")
 
                     val supervisoresDisponibles = supervisores.filter {
                         it.id != usuario.id
@@ -906,18 +1126,11 @@ private fun FormularioEditarUsuario(
                     }
                 }
 
-                mensajeError?.let { error ->
-                    Surface(
-                        color = Color(0xFFFFEEEE),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            text = error,
-                            color = Color(0xFFBA3030),
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(10.dp)
-                        )
-                    }
+                mensajeError?.let {
+                    MensajeUsuarios(
+                        mensaje = it,
+                        esError = true
+                    )
                 }
             }
         },
@@ -941,7 +1154,7 @@ private fun FormularioEditarUsuario(
                     containerColor = AzulOscuro,
                     contentColor = VerdeVolt
                 ),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = "Guardar cambios",

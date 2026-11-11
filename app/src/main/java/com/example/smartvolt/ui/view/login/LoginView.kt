@@ -1,3 +1,4 @@
+
 package com.example.smartvolt.ui.view.login
 
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -21,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.viewmodel.LoginViewModel
 
-private val AzulOscuro = Color(0xFF101D32)
-private val AzulMedio = Color(0xFF1D304A)
-private val VerdeVolt = Color(0xFFD6F36A)
-private val Fondo = Color(0xFFF1F3F6)
-private val TextoSecundario = Color(0xFF718096)
-private val Borde = Color(0xFFDCE2E9)
+private val BosqueLogin = Color(0xFF142B2A)
+private val VerdeLogin = Color(0xFF1E5147)
+private val LimaLogin = Color(0xFFC7E56A)
+private val FondoLogin = Color(0xFFF4F6F2)
+private val TextoLogin = Color(0xFF172522)
+private val SecundarioLogin = Color(0xFF718078)
+private val BordeLogin = Color(0xFFDCE5DD)
+private val BlancoLogin = Color.White
 
 @Composable
 fun LoginView(
@@ -38,157 +42,144 @@ fun LoginView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Fondo)
+            .background(FondoLogin)
             .imePadding()
             .verticalScroll(rememberScrollState())
     ) {
-
-        // ENCABEZADO INSTITUCIONAL
-
-        Column(
+        // ENCABEZADO
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(AzulOscuro)
-                .padding(
-                    horizontal = 26.dp,
-                    vertical = 30.dp
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(BosqueLogin, VerdeLogin)
+                    )
                 )
+                .padding(horizontal = 26.dp, vertical = 30.dp)
         ) {
-
-            // MARCA
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                verticalArrangement = Arrangement.spacedBy(22.dp)
             ) {
-                Text(
-                    text = "⚡",
-                    color = VerdeVolt,
-                    style = MaterialTheme.typography.headlineMedium
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        color = LimaLogin.copy(alpha = 0.14f),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text(
+                            text = "⚡",
+                            modifier = Modifier.padding(12.dp),
+                            color = LimaLogin,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
 
-                Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Text(
+                            text = "SMARTVOLT",
+                            color = BlancoLogin,
+                            fontWeight = FontWeight.ExtraBold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Text(
+                            text = "GESTIÓN DE FAENAS",
+                            color = Color(0xFFD0DED5),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        text = "v1.0",
+                        color = LimaLogin,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                HorizontalDivider(
+                    color = BlancoLogin.copy(alpha = 0.18f)
+                )
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
-                        text = "SMARTVOLT",
-                        color = Color.White,
-                        fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.titleLarge
+                        text = "PLATAFORMA DE OPERACIONES",
+                        color = LimaLogin,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text(
-                        text = "GESTIÓN DE FAENAS",
-                        color = Color(0xFFB5C2D3),
-                        style = MaterialTheme.typography.labelSmall
+                        text = "Tu jornada\ncomienza aquí.",
+                        color = BlancoLogin,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold
                     )
-                }
 
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = "LOGIN",
-                    color = VerdeVolt,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            HorizontalDivider(
-                color = Color(0xFF405067),
-                thickness = 1.dp
-            )
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // MENSAJE PRINCIPAL
-
-            Text(
-                text = "PLATAFORMA DE OPERACIONES",
-                color = VerdeVolt,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Tu jornada\ncomienza aquí.",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                lineHeight = MaterialTheme.typography.headlineLarge.lineHeight
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Sistema de control y gestión de asistencia en faenas.",
-                color = Color(0xFFB5C2D3),
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // INFORMACIÓN DE SEGURIDAD
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Surface(
-                    color = AzulMedio,
-                    shape = RoundedCornerShape(8.dp)
-                ) {
                     Text(
-                        text = "✓",
-                        color = VerdeVolt,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(
-                            horizontal = 12.dp,
-                            vertical = 9.dp
-                        )
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column {
-                    Text(
-                        text = "Acceso seguro",
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
+                        text = "Control y gestión de asistencia en faenas.",
+                        color = Color(0xFFD0DED5),
                         style = MaterialTheme.typography.bodyMedium
                     )
+                }
 
-                    Text(
-                        text = "Identificación de personal autorizado",
-                        color = Color(0xFFB5C2D3),
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Surface(
+                        color = LimaLogin.copy(alpha = 0.15f),
+                        shape = RoundedCornerShape(50.dp)
+                    ) {
+                        Text(
+                            text = "✓",
+                            color = LimaLogin,
+                            modifier = Modifier.padding(
+                                horizontal = 12.dp,
+                                vertical = 8.dp
+                            ),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Column {
+                        Text(
+                            text = "Acceso seguro",
+                            color = BlancoLogin,
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Text(
+                            text = "Solo personal autorizado",
+                            color = Color(0xFFD0DED5),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
                 }
             }
         }
 
         // FORMULARIO
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 26.dp,
-                    vertical = 30.dp
-                )
+                .padding(horizontal = 22.dp, vertical = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-
             Text(
                 text = "IDENTIFICACIÓN DE USUARIO",
-                color = TextoSecundario,
-                fontWeight = FontWeight.SemiBold,
+                color = VerdeLogin,
+                fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
 
@@ -196,7 +187,7 @@ fun LoginView(
 
             Text(
                 text = "Iniciar sesión",
-                color = AzulOscuro,
+                color = TextoLogin,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -205,17 +196,16 @@ fun LoginView(
 
             Text(
                 text = "Ingresa tus credenciales para acceder a la plataforma.",
-                color = TextoSecundario,
+                color = SecundarioLogin,
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
-            // IDENTIFICADOR
-
+            // ID
             Text(
                 text = "ID de trabajador",
-                color = AzulOscuro,
+                color = TextoLogin,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -224,43 +214,40 @@ fun LoginView(
 
             OutlinedTextField(
                 value = state.id,
-                onValueChange = {
-                    viewModel.onIdChanged(it)
-                },
+                onValueChange = { viewModel.onIdChanged(it) },
                 placeholder = {
                     Text("Ej. OP-001")
                 },
                 leadingIcon = {
                     Text(
                         text = "ID",
-                        color = TextoSecundario,
+                        color = VerdeLogin,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AzulOscuro,
-                    unfocusedBorderColor = Borde,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    cursorColor = AzulOscuro
+                    focusedBorderColor = VerdeLogin,
+                    unfocusedBorderColor = BordeLogin,
+                    focusedContainerColor = BlancoLogin,
+                    unfocusedContainerColor = BlancoLogin,
+                    cursorColor = VerdeLogin
                 )
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
             // CONTRASEÑA
-
             Text(
                 text = "Contraseña",
-                color = AzulOscuro,
+                color = TextoLogin,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -269,59 +256,55 @@ fun LoginView(
 
             OutlinedTextField(
                 value = state.password,
-                onValueChange = {
-                    viewModel.onPasswordChanged(it)
-                },
+                onValueChange = { viewModel.onPasswordChanged(it) },
                 placeholder = {
                     Text("Ingresa tu contraseña")
                 },
                 leadingIcon = {
                     Text(
-                        text = "*",
-                        color = TextoSecundario,
+                        text = "●",
+                        color = VerdeLogin,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(16.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AzulOscuro,
-                    unfocusedBorderColor = Borde,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White,
-                    cursorColor = AzulOscuro
+                    focusedBorderColor = VerdeLogin,
+                    unfocusedBorderColor = BordeLogin,
+                    focusedContainerColor = BlancoLogin,
+                    unfocusedContainerColor = BlancoLogin,
+                    cursorColor = VerdeLogin
                 )
             )
 
-            // ERROR DE AUTENTICACIÓN
-
+            // ERROR
             if (state.mensajeError != null) {
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Surface(
-                    color = Color(0xFFFFEEEE),
-                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFFCEAEA),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = state.mensajeError!!,
-                        color = Color(0xFFBA3030),
+                        color = Color(0xFFC64B4B),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(12.dp)
+                        modifier = Modifier.padding(14.dp)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
-            // BOTÓN DE ACCESO
-
+            // BOTÓN
             Button(
                 onClick = {
                     viewModel.validarYIngresar { usuario ->
@@ -331,28 +314,24 @@ fun LoginView(
                 enabled = !state.cargando,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(8.dp),
+                    .height(58.dp),
+                shape = RoundedCornerShape(17.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AzulOscuro,
-                    contentColor = Color.White,
-                    disabledContainerColor = AzulMedio
+                    containerColor = BosqueLogin,
+                    contentColor = BlancoLogin,
+                    disabledContainerColor = VerdeLogin
                 )
             ) {
-
                 if (state.cargando) {
-
                     CircularProgressIndicator(
                         modifier = Modifier.size(22.dp),
-                        color = VerdeVolt,
+                        color = LimaLogin,
                         strokeWidth = 2.dp
                     )
-
                 } else {
-
                     Text(
                         text = "Ingresar",
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelLarge
                     )
 
@@ -360,22 +339,17 @@ fun LoginView(
 
                     Text(
                         text = "→",
-                        color = VerdeVolt,
+                        color = LimaLogin,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-            HorizontalDivider(
-                color = Borde,
-                thickness = 1.dp
-            )
+            HorizontalDivider(color = BordeLogin)
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // PIE DE PÁGINA
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -384,14 +358,14 @@ fun LoginView(
             ) {
                 Text(
                     text = "SMARTVOLT v1.0",
-                    color = TextoSecundario,
+                    color = SecundarioLogin,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.SemiBold
                 )
 
                 Text(
                     text = "GESTIÓN DE FAENAS",
-                    color = TextoSecundario,
+                    color = SecundarioLogin,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
