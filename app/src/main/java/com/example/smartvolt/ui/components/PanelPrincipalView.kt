@@ -76,7 +76,7 @@ fun PanelPrincipalView(
             OpcionNavegacion("Inicio", "⌂"),
             OpcionNavegacion("Usuarios", "♧"),
             OpcionNavegacion("Faenas", "▦"),
-            OpcionNavegacion("Perfil", "●")
+            OpcionNavegacion("Ajustes", "⚙")
         )
 
         else -> emptyList()
