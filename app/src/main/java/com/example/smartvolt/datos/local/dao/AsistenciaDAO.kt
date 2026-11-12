@@ -63,7 +63,12 @@ interface AsistenciaDAO {
         distanciaMetros: Double?,
         precisionMetros: Float?
     ): Asistencia {
-        require(validacionBluetooth == "VALIDO" && validacionGps == "VALIDO")
+        require(
+            validacionBluetooth in setOf("VALIDO", "SIMULADO") &&
+                    validacionGps == "VALIDO"
+        ) {
+            "Las validaciones de asistencia no son correctas"
+        }
         require(obtenerFaenaUsuarioActivo(usuarioId) == faenaId && faenaValida(faenaId) == 1) {
             "Usuario o faena no autorizados"
         }
@@ -83,7 +88,11 @@ interface AsistenciaDAO {
             fechaHora = fechaHora,
             tipo = tipo,
             faenaId = faenaId,
-            metodoRegistro = "DEMO_BLE",
+            metodoRegistro = if (validacionBluetooth == "SIMULADO") {
+                "DEMO_BLE"
+                } else {
+                "BLE"
+                },
             validacionBluetooth = validacionBluetooth,
             validacionGps = validacionGps,
             distanciaMetros = distanciaMetros,

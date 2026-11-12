@@ -73,7 +73,12 @@ class AsistenciaViewModel(
                     usuarioId = usuarioId,
                     fechaHora = System.currentTimeMillis(),
                     faenaId = faenaId,
-                    validacionBluetooth = "VALIDO",
+                    validacionBluetooth =
+                        if (resultado.bluetoothSimulado) {
+                        "SIMULADO"
+                        } else {
+                        "VALIDO"
+                        },
                     validacionGps = "VALIDO",
                     distanciaMetros = resultado.gps.distanciaMetros.toDouble(),
                     precisionMetros = resultado.gps.precisionMetros

@@ -76,7 +76,7 @@ fun PanelPrincipalView(
             OpcionNavegacion("Inicio", "⌂"),
             OpcionNavegacion("Usuarios", "♧"),
             OpcionNavegacion("Faenas", "▦"),
-            OpcionNavegacion("Ajustes", "⚙")
+            OpcionNavegacion("Perfil", "●")
         )
 
         else -> emptyList()
@@ -229,61 +229,6 @@ fun PanelPrincipalView(
                     )
                 }
 
-                // Tarjetas de módulos
-                modulos.forEach { modulo ->
-
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 1.dp
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(18.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(5.dp)
-                            ) {
-                                Text(
-                                    text = modulo,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = BosqueProfundo,
-                                    fontWeight = FontWeight.Bold
-                                )
-
-                                Text(
-                                    text = "Módulo en preparación",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = TextoSecundarioSmartVolt
-                                )
-                            }
-
-                            Surface(
-                                color = SuperficieSuave,
-                                shape = RoundedCornerShape(50.dp)
-                            ) {
-                                Text(
-                                    text = "PRONTO",
-                                    modifier = Modifier.padding(
-                                        horizontal = 12.dp,
-                                        vertical = 7.dp
-                                    ),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = VerdePrincipal,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
-                }
             }
 
             // Cerrar sesión

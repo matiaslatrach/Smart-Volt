@@ -1,3 +1,4 @@
+
 package com.example.smartvolt.ui.view.operario
 
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
 
-private val VerdePerfil = Color(0xFF1E5147)
+private val VerdePerfil = Color(0xFF142B2A)
 private val VerdeLimaPerfil = Color(0xFFC7E56A)
 private val TextoPerfil = Color(0xFF172522)
 private val TextoSecundarioPerfil = Color(0xFF718078)
@@ -37,7 +38,6 @@ fun PerfilOperarioView(usuario: Usuario) {
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-
         // Encabezado.
         Column(
             verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -66,7 +66,6 @@ fun PerfilOperarioView(usuario: Usuario) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 Box(
                     modifier = Modifier.size(64.dp),
                     contentAlignment = Alignment.Center
@@ -108,7 +107,7 @@ fun PerfilOperarioView(usuario: Usuario) {
                     Text(
                         text = "Identificador: ${usuario.id}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFFDCE5DD)
+                        color = Color(0xFFD0DED5)
                     )
                 }
             }
@@ -129,7 +128,6 @@ fun PerfilOperarioView(usuario: Usuario) {
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-
                 Text(
                     text = "Información personal",
                     style = MaterialTheme.typography.titleLarge,
@@ -208,7 +206,7 @@ private fun InformacionPerfil(
 
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = Color(0xFFDCE5DD),
+            color = Color(0xFFE9EFE9),
             shape = RoundedCornerShape(50.dp)
         ) {
             Spacer(modifier = Modifier.size(1.dp))
