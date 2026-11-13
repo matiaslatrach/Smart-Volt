@@ -1,5 +1,10 @@
 package com.example.smartvolt.ui.view.operario
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.Borde
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,12 +33,6 @@ import com.example.smartvolt.viewmodel.AsistenciaViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-private val VerdeSmartVolt = Color(0xFF1E5147)
-private val VerdeClaro = Color(0xFFC7E56A)
-private val FondoTarjeta = Color(0xFFFFFFFF)
-private val TextoSuave = Color(0xFF718078)
-private val BordeSuave = Color(0xFFDCE5DD)
 
 @Composable
 fun AsistenciaOperarioView(
@@ -84,7 +83,7 @@ fun AsistenciaOperarioView(
             Text(
                 text = "Registra y consulta tu jornada laboral.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoSuave
+                color = TextoSecundario
             )
         }
 
@@ -93,7 +92,7 @@ fun AsistenciaOperarioView(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
-                containerColor = FondoTarjeta
+                containerColor = Blanco
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 2.dp
@@ -107,7 +106,7 @@ fun AsistenciaOperarioView(
                 Text(
                     text = "ESTADO ACTUAL",
                     style = MaterialTheme.typography.labelMedium,
-                    color = TextoSuave
+                    color = TextoSecundario
                 )
 
                 Surface(
@@ -154,19 +153,19 @@ fun AsistenciaOperarioView(
                             Text(
                                 text = "ÚLTIMA MARCACIÓN",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = TextoSuave
+                                color = TextoSecundario
                             )
 
                             Text(
                                 text = ultimaAsistencia.tipo,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = VerdeSmartVolt
+                                color = VerdePrincipal
                             )
 
                             Text(
                                 text = formatearFecha(ultimaAsistencia.fechaHora),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = TextoSuave
+                                color = TextoSecundario
                             )
                         }
                     }
@@ -183,9 +182,9 @@ fun AsistenciaOperarioView(
                     enabled = !estado.cargando,
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdeSmartVolt,
+                        containerColor = VerdePrincipal,
                         contentColor = Color.White,
-                        disabledContainerColor = VerdeSmartVolt.copy(alpha = 0.5f)
+                        disabledContainerColor = VerdePrincipal.copy(alpha = 0.5f)
                     )
                 ) {
                     if (estado.cargando) {
@@ -236,7 +235,7 @@ fun AsistenciaOperarioView(
                 Text(
                     text = "Consulta tus últimos registros de asistencia.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextoSuave
+                    color = TextoSecundario
                 )
             }
 
@@ -246,7 +245,7 @@ fun AsistenciaOperarioView(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = FondoTarjeta
+                        containerColor = Blanco
                     ),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 1.dp
@@ -267,7 +266,7 @@ fun AsistenciaOperarioView(
                         Text(
                             text = "Cuando registres tu entrada o salida, aparecerá aquí.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextoSuave
+                            color = TextoSecundario
                         )
                     }
                 }
@@ -292,7 +291,7 @@ private fun TarjetaMarcacion(
     val esEntrada = asistencia.tipo == "ENTRADA"
 
     val colorTipo = if (esEntrada) {
-        VerdeSmartVolt
+        VerdePrincipal
     } else {
         Color(0xFF397A8A)
     }
@@ -301,7 +300,7 @@ private fun TarjetaMarcacion(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FondoTarjeta
+            containerColor = Blanco
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 1.dp
@@ -335,14 +334,14 @@ private fun TarjetaMarcacion(
                 Text(
                     text = formatearFecha(asistencia.fechaHora),
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextoSuave
+                    color = TextoSecundario
                 )
             }
 
             Text(
                 text = "#${asistencia.id}",
                 style = MaterialTheme.typography.labelMedium,
-                color = TextoSuave
+                color = TextoSecundario
             )
         }
     }

@@ -1,5 +1,11 @@
 package com.example.smartvolt.ui.view.operario
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.BosqueProfundo
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,13 +42,6 @@ import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.ui.components.PanelPrincipalView
 import com.example.smartvolt.viewmodel.AsistenciaViewModel
 import com.example.smartvolt.viewmodel.AsistenciaViewModelFactory
-
-private val BosqueProfundo = Color(0xFF142B2A)
-private val VerdePrincipal = Color(0xFF1E5147)
-private val VerdeVolt = Color(0xFFC7E56A)
-private val FondoSuave = Color(0xFFF4F6F2)
-private val TextoSecundario = Color(0xFF718078)
-private val BordeSuave = Color(0xFFE9EFE9)
 
 @Composable
 fun InicioOperarioView(
@@ -324,7 +323,7 @@ private fun ContenidoInicioOperario(
 
                             Surface(
                                 modifier = Modifier.fillMaxWidth(),
-                                color = FondoSuave,
+                                color = Fondo,
                                 shape = RoundedCornerShape(14.dp)
                             ) {
                                 Column(
@@ -393,7 +392,7 @@ private fun ContenidoInicioOperario(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(
-                            color = BordeSuave,
+                            color = SuperficieSuave,
                             shape = RoundedCornerShape(13.dp)
                         ) {
                             Text(

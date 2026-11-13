@@ -1,5 +1,10 @@
 package com.example.smartvolt.ui.view.operario
 
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.TextoPrincipal
+import com.example.smartvolt.ui.theme.EstadoInformativo
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,12 +27,6 @@ import com.example.smartvolt.modelo.Asistencia
 import com.example.smartvolt.util.FechaHoraUtils
 import com.example.smartvolt.viewmodel.AsistenciaViewModel
 
-private val VerdeHistorial = Color(0xFF1E5147)
-private val AzulSalida = Color(0xFF397A8A)
-private val TextoHistorial = Color(0xFF172522)
-private val TextoSecundarioHistorial = Color(0xFF718078)
-private val FondoHistorial = Color(0xFFFFFFFF)
-
 @Composable
 fun HistorialOperarioView(
     viewModel: AsistenciaViewModel
@@ -48,13 +47,13 @@ fun HistorialOperarioView(
             Text(
                 text = "Historial de asistencia",
                 style = MaterialTheme.typography.headlineMedium,
-                color = TextoHistorial
+                color = TextoPrincipal
             )
 
             Text(
                 text = "Consulta tus registros de jornadas anteriores.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoSecundarioHistorial
+                color = TextoSecundario
             )
         }
 
@@ -62,7 +61,7 @@ fun HistorialOperarioView(
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            color = VerdeHistorial
+            color = VerdePrincipal
         ) {
             Column(
                 modifier = Modifier.padding(20.dp),
@@ -95,7 +94,7 @@ fun HistorialOperarioView(
             Text(
                 text = "Registros recientes",
                 style = MaterialTheme.typography.titleLarge,
-                color = TextoHistorial
+                color = TextoPrincipal
             )
 
             if (uiState.historial.isEmpty()) {
@@ -104,7 +103,7 @@ fun HistorialOperarioView(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = FondoHistorial
+                        containerColor = Blanco
                     ),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 1.dp
@@ -117,13 +116,13 @@ fun HistorialOperarioView(
                         Text(
                             text = "Sin registros todavía",
                             style = MaterialTheme.typography.titleMedium,
-                            color = TextoHistorial
+                            color = TextoPrincipal
                         )
 
                         Text(
                             text = "Cuando registres tu entrada o salida, tus marcaciones aparecerán aquí.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextoSecundarioHistorial
+                            color = TextoSecundario
                         )
                     }
                 }
@@ -145,16 +144,16 @@ private fun TarjetaHistorial(
     val esEntrada = asistencia.tipo == "ENTRADA"
 
     val colorTipo = if (esEntrada) {
-        VerdeHistorial
+        VerdePrincipal
     } else {
-        AzulSalida
+        EstadoInformativo
     }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(
-            containerColor = FondoHistorial
+            containerColor = Blanco
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 1.dp
@@ -174,7 +173,7 @@ private fun TarjetaHistorial(
                     Text(
                         text = if (esEntrada) "Entrada" else "Salida",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextoHistorial
+                        color = TextoPrincipal
                     )
 
                     Text(
@@ -182,7 +181,7 @@ private fun TarjetaHistorial(
                             asistencia.fechaHora
                         ),
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextoSecundarioHistorial
+                        color = TextoSecundario
                     )
                 }
 
@@ -216,7 +215,7 @@ private fun TarjetaHistorial(
                         vertical = 9.dp
                     ),
                     style = MaterialTheme.typography.labelSmall,
-                    color = TextoSecundarioHistorial
+                    color = TextoSecundario
                 )
             }
         }

@@ -1,6 +1,14 @@
 
 package com.example.smartvolt.ui.view.login
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.TextoPrincipal
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.BosqueProfundo
+import com.example.smartvolt.ui.theme.Borde
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -21,16 +29,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
+import com.example.smartvolt.ui.theme.smartVoltTextFieldColors
 import com.example.smartvolt.viewmodel.LoginViewModel
-
-private val BosqueLogin = Color(0xFF142B2A)
-private val VerdeLogin = Color(0xFF1E5147)
-private val LimaLogin = Color(0xFFC7E56A)
-private val FondoLogin = Color(0xFFF4F6F2)
-private val TextoLogin = Color(0xFF172522)
-private val SecundarioLogin = Color(0xFF718078)
-private val BordeLogin = Color(0xFFDCE5DD)
-private val BlancoLogin = Color.White
 
 @Composable
 fun LoginView(
@@ -42,7 +42,7 @@ fun LoginView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(FondoLogin)
+            .background(Fondo)
             .imePadding()
             .verticalScroll(rememberScrollState())
     ) {
@@ -52,7 +52,7 @@ fun LoginView(
                 .fillMaxWidth()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(BosqueLogin, VerdeLogin)
+                        colors = listOf(BosqueProfundo, VerdePrincipal)
                     )
                 )
                 .padding(horizontal = 26.dp, vertical = 30.dp)
@@ -64,13 +64,13 @@ fun LoginView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Surface(
-                        color = LimaLogin.copy(alpha = 0.14f),
+                        color = VerdeVolt.copy(alpha = 0.14f),
                         shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(
                             text = "⚡",
                             modifier = Modifier.padding(12.dp),
-                            color = LimaLogin,
+                            color = VerdeVolt,
                             style = MaterialTheme.typography.headlineMedium
                         )
                     }
@@ -82,7 +82,7 @@ fun LoginView(
                     ) {
                         Text(
                             text = "SMARTVOLT",
-                            color = BlancoLogin,
+                            color = Blanco,
                             fontWeight = FontWeight.ExtraBold,
                             style = MaterialTheme.typography.titleLarge
                         )
@@ -98,14 +98,14 @@ fun LoginView(
 
                     Text(
                         text = "v1.0",
-                        color = LimaLogin,
+                        color = VerdeVolt,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold
                     )
                 }
 
                 HorizontalDivider(
-                    color = BlancoLogin.copy(alpha = 0.18f)
+                    color = Blanco.copy(alpha = 0.18f)
                 )
 
                 Column(
@@ -113,14 +113,14 @@ fun LoginView(
                 ) {
                     Text(
                         text = "PLATAFORMA DE OPERACIONES",
-                        color = LimaLogin,
+                        color = VerdeVolt,
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold
                     )
 
                     Text(
                         text = "Tu jornada\ncomienza aquí.",
-                        color = BlancoLogin,
+                        color = Blanco,
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -137,12 +137,12 @@ fun LoginView(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Surface(
-                        color = LimaLogin.copy(alpha = 0.15f),
+                        color = VerdeVolt.copy(alpha = 0.15f),
                         shape = RoundedCornerShape(50.dp)
                     ) {
                         Text(
                             text = "✓",
-                            color = LimaLogin,
+                            color = VerdeVolt,
                             modifier = Modifier.padding(
                                 horizontal = 12.dp,
                                 vertical = 8.dp
@@ -154,7 +154,7 @@ fun LoginView(
                     Column {
                         Text(
                             text = "Acceso seguro",
-                            color = BlancoLogin,
+                            color = Blanco,
                             fontWeight = FontWeight.SemiBold,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -178,7 +178,7 @@ fun LoginView(
         ) {
             Text(
                 text = "IDENTIFICACIÓN DE USUARIO",
-                color = VerdeLogin,
+                color = VerdePrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
@@ -187,7 +187,7 @@ fun LoginView(
 
             Text(
                 text = "Iniciar sesión",
-                color = TextoLogin,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -196,7 +196,7 @@ fun LoginView(
 
             Text(
                 text = "Ingresa tus credenciales para acceder a la plataforma.",
-                color = SecundarioLogin,
+                color = TextoSecundario,
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -205,7 +205,7 @@ fun LoginView(
             // ID
             Text(
                 text = "ID de trabajador",
-                color = TextoLogin,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -221,7 +221,7 @@ fun LoginView(
                 leadingIcon = {
                     Text(
                         text = "ID",
-                        color = VerdeLogin,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelMedium
                     )
@@ -233,13 +233,7 @@ fun LoginView(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VerdeLogin,
-                    unfocusedBorderColor = BordeLogin,
-                    focusedContainerColor = BlancoLogin,
-                    unfocusedContainerColor = BlancoLogin,
-                    cursorColor = VerdeLogin
-                )
+                colors = smartVoltTextFieldColors()
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -247,7 +241,7 @@ fun LoginView(
             // CONTRASEÑA
             Text(
                 text = "Contraseña",
-                color = TextoLogin,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -263,7 +257,7 @@ fun LoginView(
                 leadingIcon = {
                     Text(
                         text = "●",
-                        color = VerdeLogin,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -275,13 +269,7 @@ fun LoginView(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = VerdeLogin,
-                    unfocusedBorderColor = BordeLogin,
-                    focusedContainerColor = BlancoLogin,
-                    unfocusedContainerColor = BlancoLogin,
-                    cursorColor = VerdeLogin
-                )
+                colors = smartVoltTextFieldColors()
             )
 
             // ERROR
@@ -317,15 +305,15 @@ fun LoginView(
                     .height(58.dp),
                 shape = RoundedCornerShape(17.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = BosqueLogin,
-                    contentColor = BlancoLogin,
-                    disabledContainerColor = VerdeLogin
+                    containerColor = BosqueProfundo,
+                    contentColor = Blanco,
+                    disabledContainerColor = VerdePrincipal
                 )
             ) {
                 if (state.cargando) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(22.dp),
-                        color = LimaLogin,
+                        color = VerdeVolt,
                         strokeWidth = 2.dp
                     )
                 } else {
@@ -339,7 +327,7 @@ fun LoginView(
 
                     Text(
                         text = "→",
-                        color = LimaLogin,
+                        color = VerdeVolt,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -347,7 +335,7 @@ fun LoginView(
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            HorizontalDivider(color = BordeLogin)
+            HorizontalDivider(color = Borde)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -358,14 +346,14 @@ fun LoginView(
             ) {
                 Text(
                     text = "SMARTVOLT v1.0",
-                    color = SecundarioLogin,
+                    color = TextoSecundario,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.SemiBold
                 )
 
                 Text(
                     text = "GESTIÓN DE FAENAS",
-                    color = SecundarioLogin,
+                    color = TextoSecundario,
                     style = MaterialTheme.typography.labelSmall
                 )
             }

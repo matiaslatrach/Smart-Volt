@@ -1,6 +1,13 @@
 
 package com.example.smartvolt.ui.components
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.TextoHeaderClaro
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.BosqueProfundo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,14 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 // Identidad visual SmartVolt
-private val BosqueProfundo = Color(0xFF142B2A)
-private val VerdePrincipal = Color(0xFF1E5147)
-private val VerdeVolt = Color(0xFFC7E56A)
-private val FondoSmartVolt = Color(0xFFF4F6F2)
-private val TextoSecundarioSmartVolt = Color(0xFF718078)
-private val TextoHeader = Color(0xFFD0DED5)
-private val SuperficieSuave = Color(0xFFE9EFE9)
-
 @Composable
 fun PanelPrincipalView(
     nombreRol: String,
@@ -82,7 +81,7 @@ fun PanelPrincipalView(
     }
 
     Scaffold(
-        containerColor = FondoSmartVolt,
+        containerColor = Fondo,
         bottomBar = {
             NavegacionInferior(
                 opciones = opciones,
@@ -98,7 +97,7 @@ fun PanelPrincipalView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(espacioContenido)
-                .background(FondoSmartVolt)
+                .background(Fondo)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 22.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -123,7 +122,7 @@ fun PanelPrincipalView(
                     Text(
                         text = "GESTIÓN DE FAENAS",
                         style = MaterialTheme.typography.labelSmall,
-                        color = TextoSecundarioSmartVolt,
+                        color = TextoSecundario,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -189,7 +188,7 @@ fun PanelPrincipalView(
                         Text(
                             text = subtitulo,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = TextoHeader
+                            color = TextoHeaderClaro
                         )
 
                         Surface(
@@ -224,7 +223,7 @@ fun PanelPrincipalView(
                     Text(
                         text = "Accesos rápidos correspondientes a tu perfil.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextoSecundarioSmartVolt
+                        color = TextoSecundario
                     )
                 }
 
@@ -261,7 +260,7 @@ fun PanelPrincipalView(
                                 Text(
                                     text = "Módulo en preparación",
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = TextoSecundarioSmartVolt
+                                    color = TextoSecundario
                                 )
                             }
 

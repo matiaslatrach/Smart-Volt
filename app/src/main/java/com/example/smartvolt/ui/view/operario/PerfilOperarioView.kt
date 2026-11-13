@@ -1,5 +1,9 @@
 package com.example.smartvolt.ui.view.operario
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.TextoPrincipal
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,11 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
 
-private val VerdePerfil = Color(0xFF1E5147)
-private val VerdeLimaPerfil = Color(0xFFC7E56A)
-private val TextoPerfil = Color(0xFF172522)
-private val TextoSecundarioPerfil = Color(0xFF718078)
-
 @Composable
 fun PerfilOperarioView(usuario: Usuario) {
 
@@ -45,13 +44,13 @@ fun PerfilOperarioView(usuario: Usuario) {
             Text(
                 text = "Mi perfil",
                 style = MaterialTheme.typography.headlineMedium,
-                color = TextoPerfil
+                color = TextoPrincipal
             )
 
             Text(
                 text = "Consulta tu información personal y laboral.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoSecundarioPerfil
+                color = TextoSecundario
             )
         }
 
@@ -59,7 +58,7 @@ fun PerfilOperarioView(usuario: Usuario) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(24.dp),
-            color = VerdePerfil
+            color = VerdePrincipal
         ) {
             Row(
                 modifier = Modifier.padding(22.dp),
@@ -74,7 +73,7 @@ fun PerfilOperarioView(usuario: Usuario) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         shape = CircleShape,
-                        color = VerdeLimaPerfil
+                        color = VerdeVolt
                     ) {}
 
                     Text(
@@ -86,7 +85,7 @@ fun PerfilOperarioView(usuario: Usuario) {
                             .mapNotNull { it.firstOrNull()?.uppercaseChar() }
                             .joinToString(""),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = VerdePerfil
+                        color = VerdePrincipal
                     )
                 }
 
@@ -102,7 +101,7 @@ fun PerfilOperarioView(usuario: Usuario) {
                     Text(
                         text = "OPERARIO SMARTVOLT",
                         style = MaterialTheme.typography.labelMedium,
-                        color = VerdeLimaPerfil
+                        color = VerdeVolt
                     )
 
                     Text(
@@ -133,7 +132,7 @@ fun PerfilOperarioView(usuario: Usuario) {
                 Text(
                     text = "Información personal",
                     style = MaterialTheme.typography.titleLarge,
-                    color = TextoPerfil
+                    color = TextoPrincipal
                 )
 
                 InformacionPerfil(
@@ -171,13 +170,13 @@ fun PerfilOperarioView(usuario: Usuario) {
                 Text(
                     text = "SMARTVOLT",
                     style = MaterialTheme.typography.labelLarge,
-                    color = VerdePerfil
+                    color = VerdePrincipal
                 )
 
                 Text(
                     text = "Gestión de faenas y control de asistencia.",
                     style = MaterialTheme.typography.bodySmall,
-                    color = TextoSecundarioPerfil
+                    color = TextoSecundario
                 )
             }
         }
@@ -195,13 +194,13 @@ private fun InformacionPerfil(
         Text(
             text = etiqueta,
             style = MaterialTheme.typography.labelMedium,
-            color = TextoSecundarioPerfil
+            color = TextoSecundario
         )
 
         Text(
             text = valor,
             style = MaterialTheme.typography.bodyLarge,
-            color = TextoPerfil
+            color = TextoPrincipal
         )
 
         Spacer(modifier = Modifier.size(1.dp))

@@ -1,5 +1,13 @@
 package com.example.smartvolt.ui.view.administrador
 
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoSecundario
+import com.example.smartvolt.ui.theme.TextoPrincipal
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.FondoExito
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.EstadoExitoso
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +31,6 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,22 +42,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.smartvolt.modelo.Faena
+import com.example.smartvolt.ui.components.CampoTextoSmartVolt
 import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
-import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
 import com.example.smartvolt.viewmodel.FaenaViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModel
-
-private val FondoFaenas = Color(0xFFF4F6F2)
-private val SuperficieFaenas = Color(0xFFE9EFE9)
-private val TextoFaenas = Color(0xFF172522)
-private val VerdeFaenas = Color(0xFF1E5147)
-private val BlancoFaenas = Color(0xFFFFFFFF)
-private val VerdeEstadoFaena = Color(0xFF2E7D5B)
-private val FondoEstadoFaena = Color(0xFFEBFBEE)
-private val GrisEstadoFaena = Color(0xFF718078)
 
 @Composable
 fun GestionFaenasView(
@@ -83,14 +81,14 @@ fun GestionFaenasView(
         ) {
             Text(
                 text = "ADMINISTRACIÓN",
-                color = VerdeFaenas,
+                color = VerdePrincipal,
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
                 text = "Gestión de faenas",
-                color = TextoFaenas,
+                color = TextoPrincipal,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -175,18 +173,18 @@ fun GestionFaenasView(
         ) {
             Text(
                 text = "Faenas registradas",
-                color = TextoFaenas,
+                color = TextoPrincipal,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
             Surface(
-                color = SuperficieFaenas,
+                color = SuperficieSuave,
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
                     text = "${estadoFaenas.faenas.size} faenas",
-                    color = VerdeFaenas,
+                    color = VerdePrincipal,
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(
@@ -209,7 +207,7 @@ fun GestionFaenasView(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(34.dp),
-                        color = VerdeFaenas,
+                        color = VerdePrincipal,
                         strokeWidth = 3.dp
                     )
 
@@ -226,7 +224,7 @@ fun GestionFaenasView(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = BlancoFaenas
+                        containerColor = Blanco
                     ),
                     border = BorderStroke(1.dp, Borde),
                     elevation = CardDefaults.cardElevation(0.dp)
@@ -240,13 +238,13 @@ fun GestionFaenasView(
                     ) {
                         Text(
                             text = "⌖",
-                            color = VerdeFaenas,
+                            color = VerdePrincipal,
                             style = MaterialTheme.typography.headlineLarge
                         )
 
                         Text(
                             text = "Todavía no hay faenas",
-                            color = TextoFaenas,
+                            color = TextoPrincipal,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium
                         )
@@ -319,7 +317,7 @@ private fun ResumenFaenas(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoFaenas
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(0.dp)
@@ -330,7 +328,7 @@ private fun ResumenFaenas(
         ) {
             Text(
                 text = cantidad,
-                color = VerdeFaenas,
+                color = VerdePrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -356,12 +354,12 @@ private fun MensajeFaena(
     val color = if (error) {
         MaterialTheme.colorScheme.error
     } else {
-        VerdeEstadoFaena
+        EstadoExitoso
     }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        color = if (error) Color(0xFFFFEEEE) else FondoEstadoFaena,
+        color = if (error) Color(0xFFFFEEEE) else FondoExito,
         shape = RoundedCornerShape(14.dp)
     ) {
         Row(
@@ -409,7 +407,7 @@ private fun TarjetaFaena(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoFaenas
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(0.dp)
@@ -428,14 +426,14 @@ private fun TarjetaFaena(
                     modifier = Modifier
                         .size(42.dp)
                         .background(
-                            SuperficieFaenas,
+                            SuperficieSuave,
                             RoundedCornerShape(13.dp)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "⌖",
-                        color = VerdeFaenas,
+                        color = VerdePrincipal,
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -448,7 +446,7 @@ private fun TarjetaFaena(
                 ) {
                     Text(
                         text = faena.nombre,
-                        color = TextoFaenas,
+                        color = TextoPrincipal,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -462,18 +460,18 @@ private fun TarjetaFaena(
 
                 Surface(
                     color = if (faena.activa) {
-                        FondoEstadoFaena
+                        FondoExito
                     } else {
-                        SuperficieFaenas
+                        SuperficieSuave
                     },
                     shape = RoundedCornerShape(9.dp)
                 ) {
                     Text(
                         text = if (faena.activa) "ACTIVA" else "INACTIVA",
                         color = if (faena.activa) {
-                            VerdeEstadoFaena
+                            EstadoExitoso
                         } else {
-                            GrisEstadoFaena
+                            TextoSecundario
                         },
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
@@ -495,7 +493,7 @@ private fun TarjetaFaena(
 
             // FECHAS
             Surface(
-                color = FondoFaenas,
+                color = Fondo,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -505,7 +503,7 @@ private fun TarjetaFaena(
                 ) {
                     Text(
                         text = "PERÍODO DE TRABAJO",
-                        color = VerdeFaenas,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.labelSmall
                     )
@@ -532,7 +530,7 @@ private fun TarjetaFaena(
             ) {
                 Text(
                     text = "$asignados operarios asignados",
-                    color = TextoFaenas,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -548,7 +546,7 @@ private fun TarjetaFaena(
                         } else {
                             "Ver personal"
                         },
-                        color = VerdeFaenas,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -567,7 +565,7 @@ private fun TarjetaFaena(
                 ) {
                     Text(
                         text = "Editar",
-                        color = VerdeFaenas,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -579,9 +577,9 @@ private fun TarjetaFaena(
                     Text(
                         text = if (faena.activa) "Desactivar" else "Activar",
                         color = if (faena.activa) {
-                            GrisEstadoFaena
+                            TextoSecundario
                         } else {
-                            VerdeEstadoFaena
+                            EstadoExitoso
                         },
                         fontWeight = FontWeight.SemiBold
                     )
@@ -594,7 +592,7 @@ private fun TarjetaFaena(
 
                 Text(
                     text = "Personal de la faena",
-                    color = TextoFaenas,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -619,7 +617,7 @@ private fun TarjetaFaena(
                                     onAsignarOperario(usuario, marcado)
                                 },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = VerdeFaenas,
+                                    checkedColor = VerdePrincipal,
                                     uncheckedColor = TextoSecundario
                                 )
                             )
@@ -630,7 +628,7 @@ private fun TarjetaFaena(
                             ) {
                                 Text(
                                     text = usuario.nombreCompleto,
-                                    color = TextoFaenas,
+                                    color = TextoPrincipal,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -644,12 +642,12 @@ private fun TarjetaFaena(
 
                             if (usuario.faenaId == faena.id) {
                                 Surface(
-                                    color = FondoEstadoFaena,
+                                    color = FondoExito,
                                     shape = RoundedCornerShape(7.dp)
                                 ) {
                                     Text(
                                         text = "ASIGNADO",
-                                        color = VerdeEstadoFaena,
+                                        color = EstadoExitoso,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         modifier = Modifier.padding(
@@ -706,7 +704,7 @@ private fun FormularioFaena(
     AlertDialog(
         onDismissRequest = onCerrar,
         shape = RoundedCornerShape(24.dp),
-        containerColor = BlancoFaenas,
+        containerColor = Blanco,
         title = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
@@ -717,7 +715,7 @@ private fun FormularioFaena(
                     } else {
                         "Editar faena"
                     },
-                    color = TextoFaenas,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -733,55 +731,42 @@ private fun FormularioFaena(
             Column(
                 verticalArrangement = Arrangement.spacedBy(11.dp)
             ) {
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = { nombre = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Nombre de la faena") },
-                    placeholder = { Text("Ej. Proyecto Solar Norte") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                CampoTextoSmartVolt(
+                    valor = nombre,
+                    alCambiar = { nombre = it },
+                    etiqueta = "Nombre de la faena",
+                    ejemplo = "Ej. Proyecto Solar Norte"
                 )
 
-                OutlinedTextField(
-                    value = ubicacion,
-                    onValueChange = { ubicacion = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Ubicación") },
-                    placeholder = { Text("Ej. Antofagasta") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                CampoTextoSmartVolt(
+                    valor = ubicacion,
+                    alCambiar = { ubicacion = it },
+                    etiqueta = "Ubicación",
+                    ejemplo = "Ej. Antofagasta"
                 )
 
-                OutlinedTextField(
-                    value = descripcion,
-                    onValueChange = { descripcion = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Descripción") },
-                    placeholder = { Text("Describe brevemente la faena") },
-                    shape = RoundedCornerShape(14.dp),
-                    minLines = 2,
-                    maxLines = 3
+                CampoTextoSmartVolt(
+                    valor = descripcion,
+                    alCambiar = { descripcion = it },
+                    etiqueta = "Descripción",
+                    ejemplo = "Describe brevemente la faena",
+                    unaLinea = false,
+                    lineasMinimas = 2,
+                    lineasMaximas = 3
                 )
 
-                OutlinedTextField(
-                    value = fechaInicio,
-                    onValueChange = { fechaInicio = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Fecha de inicio") },
-                    placeholder = { Text("DD/MM/AAAA") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                CampoTextoSmartVolt(
+                    valor = fechaInicio,
+                    alCambiar = { fechaInicio = it },
+                    etiqueta = "Fecha de inicio",
+                    ejemplo = "DD/MM/AAAA"
                 )
 
-                OutlinedTextField(
-                    value = fechaTermino,
-                    onValueChange = { fechaTermino = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Fecha de término") },
-                    placeholder = { Text("DD/MM/AAAA") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+                CampoTextoSmartVolt(
+                    valor = fechaTermino,
+                    alCambiar = { fechaTermino = it },
+                    etiqueta = "Fecha de término",
+                    ejemplo = "DD/MM/AAAA"
                 )
 
                 Text(

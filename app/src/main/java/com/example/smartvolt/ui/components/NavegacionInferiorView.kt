@@ -1,6 +1,10 @@
 
 package com.example.smartvolt.ui.components
 
+import com.example.smartvolt.ui.theme.VerdeVolt
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoHeaderSubtle
+import com.example.smartvolt.ui.theme.BosqueProfundo
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Home
@@ -23,11 +27,6 @@ data class OpcionNavegacion(
 )
 
 // Identidad visual SmartVolt
-private val BosqueProfundo = Color(0xFF142B2A)
-private val VerdePrincipal = Color(0xFF1E5147)
-private val VerdeVolt = Color(0xFFC7E56A)
-private val TextoInactivo = Color(0xFFB8C8BE)
-
 private fun obtenerIcono(etiqueta: String): ImageVector {
     return when (etiqueta.lowercase()) {
         "inicio", "panel" -> Icons.Filled.Home
@@ -89,8 +88,8 @@ fun NavegacionInferior(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = VerdeVolt,
                     selectedTextColor = VerdeVolt,
-                    unselectedIconColor = TextoInactivo,
-                    unselectedTextColor = TextoInactivo,
+                    unselectedIconColor = TextoHeaderSubtle,
+                    unselectedTextColor = TextoHeaderSubtle,
                     indicatorColor = VerdePrincipal
                 )
             )
