@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import com.example.smartvolt.datos.local.AppDataBase
+import com.example.smartvolt.datos.local.FaenasIniciales
 import com.example.smartvolt.datos.seguridad.GestorContrasenas
 import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.ui.navigation.NavegacionPrincipal
@@ -33,6 +34,9 @@ class MainActivity : ComponentActivity() {
         val loginViewModel = LoginViewModel(usuarioDAO)
 
         lifecycleScope.launch(Dispatchers.IO) {
+
+            // Incorporar las dos faenas de demostración sin borrar ni duplicar datos.
+            FaenasIniciales.registrarSiFaltan(database.faenaDAO())
 
             // =================================
             // USUARIO OPERARIO

@@ -38,7 +38,7 @@ fun LoginView(
     var mostrarContrasena by rememberSaveable { mutableStateOf(false) }
 
     val puedeIngresar = !estado.cargando &&
-            estado.id.isNotBlank() && estado.password.isNotBlank()
+        estado.id.isNotBlank() && estado.password.isNotBlank()
 
     // Se utiliza tanto desde el botón como desde el teclado.
     val iniciarSesion = {

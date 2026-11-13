@@ -17,6 +17,27 @@ interface FaenaDAO {
     @Query("SELECT * FROM faenas WHERE id = :id")
     suspend fun obtenerFaena(id: Long): Faena?
 
+    /**
+     * Agrega una faena de demostración una sola vez, incluso si la app
+     * se inicializa de nuevo. Nunca modifica una faena existente.
+     */
+    @Query("""
+        INSERT INTO faenas (
+            nombre, ubicacion, descripcion, fechaInicio, fechaTermino,
+            activa, latitud, longitud
+        )
+        SELECT :nombre, 'Santiago', 'Faena inicial para pruebas de asistencia',
+               '', '', 1, :latitud, :longitud
+        WHERE NOT EXISTS (
+            SELECT 1 FROM faenas WHERE nombre = :nombre COLLATE NOCASE
+        )
+    """)
+    suspend fun insertarPredeterminadaSiNoExiste(
+        nombre: String,
+        latitud: Double,
+        longitud: Double
+    ): Long
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun agregarFaena(faena: Faena)
 
