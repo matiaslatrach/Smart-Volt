@@ -1,6 +1,15 @@
 
 package com.example.smartvolt.ui.view.administrador
 
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoPrincipal
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.FondoExito
+import com.example.smartvolt.ui.theme.FondoError
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.EstadoExitoso
+import com.example.smartvolt.ui.theme.EstadoError
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,22 +55,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Usuario
+import com.example.smartvolt.ui.components.CampoTextoSmartVolt
 import com.example.smartvolt.ui.theme.AzulMedio
 import com.example.smartvolt.ui.theme.AzulOscuro
 import com.example.smartvolt.ui.theme.Borde
 import com.example.smartvolt.ui.theme.TextoSecundario
 import com.example.smartvolt.ui.theme.VerdeVolt
 import com.example.smartvolt.viewmodel.UsuarioViewModel
-
-private val FondoUsuarios = Color(0xFFF4F6F2)
-private val SuperficieUsuarios = Color(0xFFE9EFE9)
-private val TextoUsuarios = Color(0xFF172522)
-private val VerdeUsuarios = Color(0xFF1E5147)
-private val BlancoUsuarios = Color(0xFFFFFFFF)
-private val VerdeExitoUsuarios = Color(0xFF2E7D5B)
-private val RojoErrorUsuarios = Color(0xFFC64B4B)
-private val FondoErrorUsuarios = Color(0xFFFFEEEE)
-private val FondoExitoUsuarios = Color(0xFFEBFBEE)
 
 @Composable
 fun GestionUsuariosView(
@@ -100,7 +100,7 @@ fun GestionUsuariosView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(FondoUsuarios),
+            .background(Fondo),
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
 
@@ -110,14 +110,14 @@ fun GestionUsuariosView(
         ) {
             Text(
                 text = "ADMINISTRACIÓN",
-                color = VerdeUsuarios,
+                color = VerdePrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelMedium
             )
 
             Text(
                 text = "Gestión de usuarios",
-                color = TextoUsuarios,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -202,18 +202,18 @@ fun GestionUsuariosView(
         ) {
             Text(
                 text = "Personal registrado",
-                color = TextoUsuarios,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleLarge
             )
 
             Surface(
-                color = SuperficieUsuarios,
+                color = SuperficieSuave,
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
                     text = "${estado.usuarios.size} cuentas",
-                    color = VerdeUsuarios,
+                    color = VerdePrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(
@@ -236,7 +236,7 @@ fun GestionUsuariosView(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(34.dp),
-                        color = VerdeUsuarios,
+                        color = VerdePrincipal,
                         strokeWidth = 3.dp
                     )
 
@@ -253,7 +253,7 @@ fun GestionUsuariosView(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = BlancoUsuarios
+                        containerColor = Blanco
                     ),
                     border = BorderStroke(1.dp, Borde)
                 ) {
@@ -266,13 +266,13 @@ fun GestionUsuariosView(
                     ) {
                         Text(
                             text = "◎",
-                            color = VerdeUsuarios,
+                            color = VerdePrincipal,
                             style = MaterialTheme.typography.headlineLarge
                         )
 
                         Text(
                             text = "Aún no hay usuarios",
-                            color = TextoUsuarios,
+                            color = TextoPrincipal,
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium
                         )
@@ -363,11 +363,11 @@ fun GestionUsuariosView(
                 usuarioPorEliminar = null
             },
             shape = RoundedCornerShape(24.dp),
-            containerColor = BlancoUsuarios,
+            containerColor = Blanco,
             title = {
                 Text(
                     text = "Eliminar usuario",
-                    color = TextoUsuarios,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold
                 )
             },
@@ -385,8 +385,8 @@ fun GestionUsuariosView(
                         usuarioPorEliminar = null
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = RojoErrorUsuarios,
-                        contentColor = BlancoUsuarios
+                        containerColor = EstadoError,
+                        contentColor = Blanco
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -426,7 +426,7 @@ private fun ResumenUsuarios(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoUsuarios
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
@@ -439,7 +439,7 @@ private fun ResumenUsuarios(
         ) {
             Text(
                 text = cantidad,
-                color = VerdeUsuarios,
+                color = VerdePrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -463,7 +463,7 @@ private fun MensajeUsuarios(
     esError: Boolean
 ) {
     Surface(
-        color = if (esError) FondoErrorUsuarios else FondoExitoUsuarios,
+        color = if (esError) FondoError else FondoExito,
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -476,14 +476,14 @@ private fun MensajeUsuarios(
                 modifier = Modifier
                     .size(8.dp)
                     .background(
-                        if (esError) RojoErrorUsuarios else VerdeExitoUsuarios,
+                        if (esError) EstadoError else EstadoExitoso,
                         CircleShape
                     )
             )
 
             Text(
                 text = mensaje,
-                color = if (esError) RojoErrorUsuarios else VerdeExitoUsuarios,
+                color = if (esError) EstadoError else EstadoExitoso,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium
             )
@@ -520,14 +520,14 @@ private fun FormularioCrearUsuario(
     AlertDialog(
         onDismissRequest = onCerrar,
         shape = RoundedCornerShape(24.dp),
-        containerColor = BlancoUsuarios,
+        containerColor = Blanco,
         title = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
                     text = "Nuevo usuario",
-                    color = TextoUsuarios,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -546,7 +546,7 @@ private fun FormularioCrearUsuario(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                CampoUsuario(
+                CampoTextoSmartVolt(
                     valor = id,
                     alCambiar = { id = it.uppercase() },
                     etiqueta = "ID de usuario",
@@ -554,7 +554,7 @@ private fun FormularioCrearUsuario(
                     habilitado = !creando
                 )
 
-                CampoUsuario(
+                CampoTextoSmartVolt(
                     valor = nombre,
                     alCambiar = { nombre = it },
                     etiqueta = "Nombre completo",
@@ -562,19 +562,16 @@ private fun FormularioCrearUsuario(
                     habilitado = !creando
                 )
 
-                OutlinedTextField(
-                    value = contrasena,
-                    onValueChange = { contrasena = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Contraseña") },
-                    placeholder = { Text("Mínimo 6 caracteres") },
-                    singleLine = true,
-                    visualTransformation = PasswordVisualTransformation(),
-                    enabled = !creando,
-                    shape = RoundedCornerShape(14.dp)
+                CampoTextoSmartVolt(
+                    valor = contrasena,
+                    alCambiar = { contrasena = it },
+                    etiqueta = "Contraseña",
+                    ejemplo = "Mínimo 6 caracteres",
+                    habilitado = !creando,
+                    transformacionVisual = PasswordVisualTransformation()
                 )
 
-                CampoUsuario(
+                CampoTextoSmartVolt(
                     valor = cargo,
                     alCambiar = { cargo = it },
                     etiqueta = "Cargo",
@@ -695,32 +692,12 @@ private fun FormularioCrearUsuario(
 // --------------------------------------------------
 
 @Composable
-private fun CampoUsuario(
-    valor: String,
-    alCambiar: (String) -> Unit,
-    etiqueta: String,
-    ejemplo: String,
-    habilitado: Boolean
-) {
-    OutlinedTextField(
-        value = valor,
-        onValueChange = alCambiar,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(etiqueta) },
-        placeholder = { Text(ejemplo) },
-        singleLine = true,
-        enabled = habilitado,
-        shape = RoundedCornerShape(14.dp)
-    )
-}
-
-@Composable
 private fun EtiquetaFormulario(
     texto: String
 ) {
     Text(
         text = texto,
-        color = VerdeUsuarios,
+        color = VerdePrincipal,
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.labelMedium
     )
@@ -764,12 +741,12 @@ private fun SelectorDesplegable(
                     } else {
                         etiqueta(valor)
                     },
-                    color = TextoUsuarios
+                    color = TextoPrincipal
                 )
 
                 Text(
                     text = "⌄",
-                    color = VerdeUsuarios,
+                    color = VerdePrincipal,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -814,9 +791,9 @@ private fun TarjetaUsuario(
     onEliminar: () -> Unit
 ) {
     val colorEstado = if (usuario.activo) {
-        VerdeExitoUsuarios
+        EstadoExitoso
     } else {
-        RojoErrorUsuarios
+        EstadoError
     }
 
     val iniciales = usuario.nombreCompleto
@@ -830,7 +807,7 @@ private fun TarjetaUsuario(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoUsuarios
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
@@ -851,14 +828,14 @@ private fun TarjetaUsuario(
                     modifier = Modifier
                         .size(46.dp)
                         .background(
-                            SuperficieUsuarios,
+                            SuperficieSuave,
                             CircleShape
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = iniciales.ifBlank { "U" },
-                        color = VerdeUsuarios,
+                        color = VerdePrincipal,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -872,7 +849,7 @@ private fun TarjetaUsuario(
                 ) {
                     Text(
                         text = usuario.nombreCompleto,
-                        color = TextoUsuarios,
+                        color = TextoPrincipal,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -886,9 +863,9 @@ private fun TarjetaUsuario(
 
                 Surface(
                     color = if (usuario.activo) {
-                        FondoExitoUsuarios
+                        FondoExito
                     } else {
-                        FondoErrorUsuarios
+                        FondoError
                     },
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -906,7 +883,7 @@ private fun TarjetaUsuario(
             }
 
             Surface(
-                color = FondoUsuarios,
+                color = Fondo,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -916,7 +893,7 @@ private fun TarjetaUsuario(
                 ) {
                     Text(
                         text = usuario.cargo,
-                        color = TextoUsuarios,
+                        color = TextoPrincipal,
                         fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -946,7 +923,7 @@ private fun TarjetaUsuario(
                     ) {
                         Text(
                             text = "Editar",
-                            color = VerdeUsuarios,
+                            color = VerdePrincipal,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -959,7 +936,7 @@ private fun TarjetaUsuario(
                     ) {
                         Text(
                             text = "Eliminar",
-                            color = RojoErrorUsuarios,
+                            color = EstadoError,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -968,7 +945,7 @@ private fun TarjetaUsuario(
                 if (actualizando) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
-                        color = VerdeUsuarios,
+                        color = VerdePrincipal,
                         strokeWidth = 2.dp
                     )
                 } else {
@@ -1019,14 +996,14 @@ private fun FormularioEditarUsuario(
     AlertDialog(
         onDismissRequest = onCerrar,
         shape = RoundedCornerShape(24.dp),
-        containerColor = BlancoUsuarios,
+        containerColor = Blanco,
         title = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
                     text = "Editar usuario",
-                    color = TextoUsuarios,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineSmall
                 )
@@ -1055,7 +1032,7 @@ private fun FormularioEditarUsuario(
                     shape = RoundedCornerShape(14.dp)
                 )
 
-                CampoUsuario(
+                CampoTextoSmartVolt(
                     valor = nombre,
                     alCambiar = { nombre = it },
                     etiqueta = "Nombre completo",
@@ -1063,7 +1040,7 @@ private fun FormularioEditarUsuario(
                     habilitado = true
                 )
 
-                CampoUsuario(
+                CampoTextoSmartVolt(
                     valor = cargo,
                     alCambiar = { cargo = it },
                     etiqueta = "Cargo",

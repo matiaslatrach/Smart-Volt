@@ -1,6 +1,11 @@
 
 package com.example.smartvolt.ui.view.administrador
 
+import com.example.smartvolt.ui.theme.VerdePrincipal
+import com.example.smartvolt.ui.theme.TextoPrincipal
+import com.example.smartvolt.ui.theme.SuperficieSuave
+import com.example.smartvolt.ui.theme.Fondo
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,12 +46,6 @@ import com.example.smartvolt.viewmodel.FaenaViewModel
 import com.example.smartvolt.viewmodel.FaenaViewModelFactory
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModelFactory
-
-private val VerdePrincipalAdmin = Color(0xFF1E5147)
-private val FondoAdmin = Color(0xFFF4F6F2)
-private val SuperficieAdmin = Color(0xFFE9EFE9)
-private val TextoPrincipalAdmin = Color(0xFF172522)
-private val BlancoAdmin = Color.White
 
 @Composable
 fun InicioAdministradorView(
@@ -140,7 +139,7 @@ private fun ContenidoInicioAdministrador(
 
             Text(
                 text = "Panel de administración",
-                color = TextoPrincipalAdmin,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -161,7 +160,7 @@ private fun ContenidoInicioAdministrador(
                     Brush.verticalGradient(
                         colors = listOf(
                             AzulOscuro,
-                            VerdePrincipalAdmin
+                            VerdePrincipal
                         )
                     )
                 )
@@ -188,7 +187,7 @@ private fun ContenidoInicioAdministrador(
 
                 Text(
                     text = "Todo bajo\ncontrol.",
-                    color = BlancoAdmin,
+                    color = Blanco,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineLarge
                 )
@@ -207,7 +206,7 @@ private fun ContenidoInicioAdministrador(
         ) {
             Text(
                 text = "Módulos de administración",
-                color = TextoPrincipalAdmin,
+                color = TextoPrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleLarge
             )
@@ -255,7 +254,7 @@ private fun TarjetaAccesoAdministrador(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoAdmin
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
@@ -269,7 +268,7 @@ private fun TarjetaAccesoAdministrador(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Surface(
-                color = SuperficieAdmin,
+                color = SuperficieSuave,
                 shape = RoundedCornerShape(13.dp)
             ) {
                 Text(
@@ -278,7 +277,7 @@ private fun TarjetaAccesoAdministrador(
                         horizontal = 12.dp,
                         vertical = 13.dp
                     ),
-                    color = VerdePrincipalAdmin,
+                    color = VerdePrincipal,
                     fontWeight = FontWeight.ExtraBold,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -292,7 +291,7 @@ private fun TarjetaAccesoAdministrador(
             ) {
                 Text(
                     text = titulo,
-                    color = TextoPrincipalAdmin,
+                    color = TextoPrincipal,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleMedium
                 )
@@ -343,7 +342,7 @@ private fun SeccionAdministradorPendiente(
 
         Text(
             text = titulo,
-            color = TextoPrincipalAdmin,
+            color = TextoPrincipal,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.headlineMedium
         )
@@ -355,7 +354,7 @@ private fun SeccionAdministradorPendiente(
         )
 
         Surface(
-            color = SuperficieAdmin,
+            color = SuperficieSuave,
             shape = RoundedCornerShape(14.dp)
         ) {
             Text(
@@ -364,7 +363,7 @@ private fun SeccionAdministradorPendiente(
                     horizontal = 14.dp,
                     vertical = 10.dp
                 ),
-                color = VerdePrincipalAdmin,
+                color = VerdePrincipal,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.labelSmall
             )

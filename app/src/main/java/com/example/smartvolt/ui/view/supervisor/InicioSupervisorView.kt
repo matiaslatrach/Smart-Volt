@@ -1,5 +1,6 @@
 package com.example.smartvolt.ui.view.supervisor
 
+import com.example.smartvolt.ui.theme.Blanco
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,8 +53,6 @@ import com.example.smartvolt.ui.theme.VerdeVolt
 import com.example.smartvolt.util.FechaHoraUtils
 import com.example.smartvolt.viewmodel.UsuarioViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModelFactory
-
-private val BlancoSupervisor = Color.White
 
 @Composable
 fun InicioSupervisorView(
@@ -226,7 +225,7 @@ fun ContenidoInicioSupervisor(
 
                 Text(
                     text = "Tu equipo,\nbajo control.",
-                    color = BlancoSupervisor,
+                    color = Blanco,
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.headlineLarge
                 )
@@ -314,7 +313,7 @@ fun TarjetaAccesoSupervisor(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoSupervisor
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
@@ -418,7 +417,7 @@ fun SeccionSupervisor(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
-                containerColor = BlancoSupervisor
+                containerColor = Blanco
             ),
             border = BorderStroke(1.dp, Borde),
             elevation = CardDefaults.cardElevation(
@@ -575,7 +574,7 @@ private fun TarjetaPersonalSupervisor(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoSupervisor
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
@@ -761,7 +760,7 @@ fun SeccionAsistenciaEquipo(
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
-                            containerColor = BlancoSupervisor
+                            containerColor = Blanco
                         ),
                         shape = RoundedCornerShape(18.dp),
                         border = BorderStroke(1.dp, Borde),
@@ -920,7 +919,7 @@ fun SeccionReportesEquipo(
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = BlancoSupervisor
+                containerColor = Blanco
             ),
             border = BorderStroke(1.dp, Borde),
             shape = RoundedCornerShape(20.dp),
@@ -987,7 +986,7 @@ private fun TarjetaResumenSupervisor(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
-            containerColor = BlancoSupervisor
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         shape = RoundedCornerShape(18.dp),
@@ -1077,7 +1076,7 @@ private fun TarjetaEstadoVacioSupervisor(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = BlancoSupervisor
+            containerColor = Blanco
         ),
         border = BorderStroke(1.dp, Borde),
         elevation = CardDefaults.cardElevation(
