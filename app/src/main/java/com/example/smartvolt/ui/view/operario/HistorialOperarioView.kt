@@ -183,6 +183,14 @@ private fun TarjetaHistorial(
                         style = MaterialTheme.typography.bodySmall,
                         color = TextoSecundario
                     )
+
+                    if (asistencia.metodoRegistro.startsWith("DEMO")) {
+                        Text(
+                            "Bluetooth simulado · GPS real",
+                            color = TextoSecundario,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))

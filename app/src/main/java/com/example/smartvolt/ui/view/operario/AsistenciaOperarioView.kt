@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.smartvolt.modelo.Asistencia
+import com.example.smartvolt.modelo.Faena
 import com.example.smartvolt.viewmodel.AsistenciaViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -36,7 +37,8 @@ import java.util.Locale
 
 @Composable
 fun AsistenciaOperarioView(
-    viewModel: AsistenciaViewModel
+    viewModel: AsistenciaViewModel,
+    faena: Faena?
 ) {
 
     val estado by viewModel.uiState.collectAsState()
@@ -171,33 +173,31 @@ fun AsistenciaOperarioView(
                     }
                 }
 
-                // Acción principal.
-                Button(
-                    onClick = {
-                        viewModel.registrarMarcacion()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.dp),
-                    enabled = !estado.cargando,
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = VerdePrincipal,
-                        contentColor = Color.White,
-                        disabledContainerColor = VerdePrincipal.copy(alpha = 0.5f)
+                // Entrada: Bluetooth + baliza DEMO + GPS fresco. Salida: sin validación.
+                if (!jornadaIniciada) {
+                    ValidacionEntradaView(
+                        faena = faena,
+                        ocupado = estado.cargando,
+                        onValidada = {
+                            viewModel.registrarMarcacion(entradaValidada = true, tipoEsperado = "ENTRADA")
+                        }
                     )
-                ) {
-                    if (estado.cargando) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(22.dp),
-                            color = Color.White,
-                            strokeWidth = 2.dp
+                } else {
+                    Button(
+                        onClick = { viewModel.registrarMarcacion(tipoEsperado = "SALIDA") },
+                        modifier = Modifier.fillMaxWidth().height(54.dp),
+                        enabled = !estado.cargando,
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = VerdePrincipal,
+                            contentColor = Color.White
                         )
-                    } else {
-                        Text(
-                            text = textoBoton,
-                            style = MaterialTheme.typography.titleSmall
-                        )
+                    ) {
+                        if (estado.cargando) {
+                            CircularProgressIndicator(modifier = Modifier.size(22.dp), color = Color.White)
+                        } else {
+                            Text(textoBoton, style = MaterialTheme.typography.titleSmall)
+                        }
                     }
                 }
 
@@ -336,6 +336,10 @@ private fun TarjetaMarcacion(
                     style = MaterialTheme.typography.bodySmall,
                     color = TextoSecundario
                 )
+                if (asistencia.metodoRegistro.startsWith("DEMO")) {
+                    Text("Bluetooth simulado · GPS real", color = TextoSecundario,
+                        style = MaterialTheme.typography.labelSmall)
+                }
             }
 
             Text(

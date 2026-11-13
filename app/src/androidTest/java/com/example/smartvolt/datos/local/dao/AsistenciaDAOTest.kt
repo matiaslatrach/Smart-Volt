@@ -9,6 +9,7 @@ import com.example.smartvolt.modelo.Usuario
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,6 +42,20 @@ class AsistenciaDAOTest {
     }
 
     @Test
+    fun entradaSinValidacionesEsRechazada() = runBlocking {
+        val usuario = Usuario("OP-SIN-VALIDACION", "hash", "Prueba", "Operario", "OPERARIO")
+        usuarioDAO.agregarUsuario(usuario)
+        var rechazada = false
+        try {
+            asistenciaDAO.registrarSiguienteMarcacion(usuario.id, 1000L)
+        } catch (_: IllegalStateException) {
+            rechazada = true
+        }
+        assertTrue(rechazada)
+        assertEquals(null, asistenciaDAO.obtenerUltimaAsistencia(usuario.id))
+    }
+
+    @Test
     fun registrarSecuenciaDeAsistenciaCorrectamente() = runBlocking {
 
         // Crear un usuario de prueba.
@@ -57,15 +72,19 @@ class AsistenciaDAOTest {
         // Primera marcación: debe ser ENTRADA.
         val primera = asistenciaDAO.registrarSiguienteMarcacion(
             usuarioId = usuario.id,
-            fechaHora = 1000L
+            fechaHora = 1000L,
+            entradaValidada = true,
+            tipoEsperado = "ENTRADA"
         )
 
         assertEquals("ENTRADA", primera.tipo)
+        assertEquals("DEMO_BLE_GPS", primera.metodoRegistro)
 
         // Segunda marcación: debe ser SALIDA.
         val segunda = asistenciaDAO.registrarSiguienteMarcacion(
             usuarioId = usuario.id,
-            fechaHora = 2000L
+            fechaHora = 2000L,
+            tipoEsperado = "SALIDA"
         )
 
         assertEquals("SALIDA", segunda.tipo)
@@ -73,7 +92,9 @@ class AsistenciaDAOTest {
         // Tercera marcación: debe volver a ser ENTRADA.
         val tercera = asistenciaDAO.registrarSiguienteMarcacion(
             usuarioId = usuario.id,
-            fechaHora = 3000L
+            fechaHora = 3000L,
+            entradaValidada = true,
+            tipoEsperado = "ENTRADA"
         )
 
         assertEquals("ENTRADA", tercera.tipo)

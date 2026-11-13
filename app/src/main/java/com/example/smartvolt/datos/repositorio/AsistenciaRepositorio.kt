@@ -17,11 +17,15 @@ class AsistenciaRepositorio(
 
     suspend fun registrarSiguienteMarcacion(
         usuarioId: String,
-        fechaHora: Long
+        fechaHora: Long,
+        entradaValidada: Boolean = false,
+        tipoEsperado: String? = null
     ): Asistencia {
         return asistenciaDAO.registrarSiguienteMarcacion(
             usuarioId = usuarioId,
-            fechaHora = fechaHora
+            fechaHora = fechaHora,
+            entradaValidada = entradaValidada,
+            tipoEsperado = tipoEsperado
         )
     }
 

@@ -49,6 +49,9 @@ import com.example.smartvolt.ui.theme.Borde
 import com.example.smartvolt.ui.theme.VerdeVolt
 import com.example.smartvolt.viewmodel.FaenaViewModel
 import com.example.smartvolt.viewmodel.UsuarioViewModel
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 @Composable
 fun GestionFaenasView(
@@ -694,12 +697,19 @@ private fun FormularioFaena(
     var fechaTermino by remember(faena) {
         mutableStateOf(faena?.fechaTermino ?: "")
     }
+    var latitudTexto by remember(faena) { mutableStateOf(faena?.latitud?.toString() ?: "") }
+    var longitudTexto by remember(faena) { mutableStateOf(faena?.longitud?.toString() ?: "") }
+
+    val latitud = latitudTexto.trim().toDoubleOrNull()
+    val longitud = longitudTexto.trim().toDoubleOrNull()
+    val coordenadasValidas = latitud != null && latitud in -90.0..90.0 &&
+        longitud != null && longitud in -180.0..180.0
 
     val formularioValido =
         nombre.isNotBlank() &&
                 ubicacion.isNotBlank() &&
                 fechaInicio.isNotBlank() &&
-                fechaTermino.isNotBlank()
+                fechaTermino.isNotBlank() && coordenadasValidas
 
     AlertDialog(
         onDismissRequest = onCerrar,
@@ -729,6 +739,7 @@ private fun FormularioFaena(
         },
         text = {
             Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(11.dp)
             ) {
                 CampoTextoSmartVolt(
@@ -769,6 +780,23 @@ private fun FormularioFaena(
                     ejemplo = "DD/MM/AAAA"
                 )
 
+                CampoTextoSmartVolt(
+                    valor = latitudTexto,
+                    alCambiar = { latitudTexto = it },
+                    etiqueta = "Latitud de la faena",
+                    ejemplo = "Ej. -33.4500"
+                )
+                CampoTextoSmartVolt(
+                    valor = longitudTexto,
+                    alCambiar = { longitudTexto = it },
+                    etiqueta = "Longitud de la faena",
+                    ejemplo = "Ej. -70.6500"
+                )
+                Text(
+                    text = "La entrada requiere GPS a 100 m o menos de estas coordenadas.",
+                    color = TextoSecundario,
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Text(
                     text = "Los campos con información obligatoria deben completarse antes de guardar.",
                     color = TextoSecundario,
@@ -788,7 +816,9 @@ private fun FormularioFaena(
                             descripcion = descripcion.trim(),
                             fechaInicio = fechaInicio.trim(),
                             fechaTermino = fechaTermino.trim(),
-                            activa = faena?.activa ?: true
+                            activa = faena?.activa ?: true,
+                            latitud = latitud,
+                            longitud = longitud
                         )
                     )
                 },
