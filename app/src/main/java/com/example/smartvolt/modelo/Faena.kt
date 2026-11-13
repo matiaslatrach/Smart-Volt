@@ -13,5 +13,7 @@ data class Faena(
     val descripcion: String,
     val fechaInicio: String,
     val fechaTermino: String,
-    val activa: Boolean = true
+    val activa: Boolean = true,
+    val latitud: Double? = null,
+    val longitud: Double? = null
 )

@@ -48,7 +48,7 @@ class AsistenciaViewModel(
     }
 
     // Registrar la siguiente marcación mediante Room.
-    fun registrarMarcacion() {
+    fun registrarMarcacion(entradaValidada: Boolean = false, tipoEsperado: String? = null) {
 
         // Si ya existe una operación, ignorar la nueva pulsación.
         if (!bloqueoMarcacion.tryLock()) return
@@ -66,7 +66,9 @@ class AsistenciaViewModel(
                 // dentro de una única transacción.
                 val asistencia = repositorio.registrarSiguienteMarcacion(
                     usuarioId = usuarioId,
-                    fechaHora = System.currentTimeMillis()
+                    fechaHora = System.currentTimeMillis(),
+                    entradaValidada = entradaValidada,
+                    tipoEsperado = tipoEsperado
                 )
 
                 _uiState.value = _uiState.value.copy(
@@ -85,7 +87,8 @@ class AsistenciaViewModel(
 
                 _uiState.value = _uiState.value.copy(
                     mensaje = null,
-                    mensajeError = "No fue posible registrar la asistencia."
+                    mensajeError = if (e is IllegalStateException) e.message
+                        else "No fue posible registrar la asistencia."
                 )
 
             } finally {

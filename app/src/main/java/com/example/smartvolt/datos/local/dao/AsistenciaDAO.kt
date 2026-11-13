@@ -50,7 +50,9 @@ interface AsistenciaDAO {
     @Transaction
     suspend fun registrarSiguienteMarcacion(
         usuarioId: String,
-        fechaHora: Long
+        fechaHora: Long,
+        entradaValidada: Boolean = false,
+        tipoEsperado: String? = null
     ): Asistencia {
 
         val ultima = obtenerUltimaAsistencia(usuarioId)
@@ -63,10 +65,20 @@ interface AsistenciaDAO {
             )
         }
 
+        if (tipoEsperado != null && tipo != tipoEsperado) {
+            throw IllegalStateException("La jornada cambió de estado. Vuelve a revisar la marcación.")
+        }
+
+        // La validación también se exige en la capa de datos, no solo en la UI.
+        if (tipo == "ENTRADA" && !entradaValidada) {
+            throw IllegalStateException("Verifica Bluetooth y GPS antes de registrar la entrada.")
+        }
+
         val asistencia = Asistencia(
             usuarioId = usuarioId,
             fechaHora = fechaHora,
-            tipo = tipo
+            tipo = tipo,
+            metodoRegistro = if (tipo == "ENTRADA") "DEMO_BLE_GPS" else "SALIDA"
         )
 
         registrarAsistencia(asistencia)
