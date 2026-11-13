@@ -6,11 +6,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import com.example.smartvolt.datos.local.AppDataBase
 import com.example.smartvolt.datos.seguridad.GestorContrasenas
 import com.example.smartvolt.modelo.Usuario
 import com.example.smartvolt.ui.navigation.NavegacionPrincipal
+import com.example.smartvolt.ui.view.splash.SplashSmartVoltView
 import com.example.smartvolt.ui.theme.SmartVoltTheme
 import com.example.smartvolt.viewmodel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
@@ -111,10 +116,17 @@ class MainActivity : ComponentActivity() {
             SmartVoltTheme {
                 val navController = rememberNavController()
 
-                NavegacionPrincipal(
-                    navController = navController,
-                    loginViewModel = loginViewModel
-                )
+                // El splash aparece una vez al abrir la app, sin cambiar las rutas.
+                var mostrarSplash by rememberSaveable { mutableStateOf(true) }
+
+                if (mostrarSplash) {
+                    SplashSmartVoltView(onFinalizar = { mostrarSplash = false })
+                } else {
+                    NavegacionPrincipal(
+                        navController = navController,
+                        loginViewModel = loginViewModel
+                    )
+                }
             }
         }
     }
